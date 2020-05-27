@@ -36,8 +36,8 @@ class AiRoom(
     type: GameTypeData,
     deckProvider: DeckProvider,
     private val tagLogger: TagLogger?,
-    playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
-    private val dispatcher: CoroutineDispatcher
+    private val dispatcher: CoroutineDispatcher,
+    playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger)
 ) {
 
     internal val room: Room = NormalRoom(id, type, deckProvider, tagLogger, playerNotifier, 1250L)
