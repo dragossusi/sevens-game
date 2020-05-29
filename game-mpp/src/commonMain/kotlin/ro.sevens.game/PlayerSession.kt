@@ -2,6 +2,7 @@ package ro.sevens.game
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import ro.sevens.game.room.Room
 import ro.sevens.payload.Card
 import ro.sevens.payload.Player
@@ -34,6 +35,7 @@ class PlayerSession constructor(
     val player: Player
 ) {
 
+    @Transient
     var hand: Hand? = null
 
     val cardsCount: Int

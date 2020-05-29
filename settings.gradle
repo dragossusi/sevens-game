@@ -8,7 +8,8 @@ include ":ai-mpp"
 // preload
 include ":payload-mpp"
 project(":payload-mpp").projectDir = file("../sevens-payload/mpp")
+//core
 include ":logger-mpp"
-project(":logger-mpp").projectDir = file("../../Idea/sevens-core/logger-mpp")
+project(":logger-mpp").projectDir = file("../sevens-core/logger-mpp")
 include ":game-listener-mpp"
-project(":game-listener-mpp").projectDir = file("../../Idea/sevens-core/game-listener-mpp")
+project(":game-listener-mpp").projectDir = file("../sevens-core/game-listener-mpp")
