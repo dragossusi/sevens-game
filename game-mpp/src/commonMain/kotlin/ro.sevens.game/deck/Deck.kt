@@ -23,6 +23,7 @@ import ro.sevens.payload.game.CardsContainer
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
+
 interface Deck : CardsContainer {
 
     override val cards: List<Card>

@@ -22,6 +22,7 @@ import ro.sevens.payload.Card
  *
  */
 
+
 fun MutableList<Card>.addAll(number: Int) {
     add(Card(number, Card.Type.NEAGRA))
     add(Card(number, Card.Type.ROMB))
