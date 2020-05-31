@@ -27,7 +27,7 @@ import ro.sevens.payload.extensions.pointsCount
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class AiPlayer(
+class AiPlayer constructor(
     val player: PlayerSession,
     val type: GameTypeData
 ) {

@@ -23,6 +23,7 @@ import ro.sevens.game.listener.*
  */
 interface SevensCommunication : ServerActions {
     var onRoomStarted: OnRoomStarted?
+    var onRoomStopped: OnRoomStopped?
     var onPlayerTurn: OnPlayerTurn?
     var onRoundEnded: OnRoundEnded?
 

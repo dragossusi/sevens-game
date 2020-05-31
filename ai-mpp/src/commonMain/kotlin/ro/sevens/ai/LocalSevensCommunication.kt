@@ -49,6 +49,7 @@ class LocalSevensCommunication constructor(
     override var onRoundStarted: OnRoundStarted? = null
     override var onPlayerTurn: OnPlayerTurn? = null
     override var onRoundEnded: OnRoundEnded? = null
+    override var onRoomStopped: OnRoomStopped? = null
 
     override fun placeCard(card: Card) {
         launch {

@@ -95,6 +95,10 @@ class NormalRoom constructor(
 
     private suspend fun setPlayerTurn(player: PlayerSession) {
         currentPlayer = player
+        dispatchPlayerTurn()
+    }
+
+    private suspend fun dispatchPlayerTurn() {
         playerNotifier.onPlayerTurn(this)
     }
 

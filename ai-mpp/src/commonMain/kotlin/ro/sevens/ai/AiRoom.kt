@@ -45,7 +45,7 @@ class AiRoom(
     suspend fun addAi(name: String) {
         val playerSession = PlayerSession(
             room,
-            Player(room.players.size.toLong(), name, null)
+            Player(-room.players.size.toLong(), name, null)
         )
         val listener = AiPlayerListener(
             player = AiPlayer(playerSession, room.type),
