@@ -1,7 +1,5 @@
 rootProject.name = 'sevens-game'
-include ":game"
 include ":game-mpp"
-include ":ai"
 include ":ai-mpp"
 
 
