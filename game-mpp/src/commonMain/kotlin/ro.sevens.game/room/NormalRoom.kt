@@ -87,7 +87,7 @@ class NormalRoom constructor(
             if (currentRound!!.canCut(nextPlayer, playerCount)) {
                 setPlayerTurn(nextPlayer)
             } else {
-                newRound()
+                newRound(player)
             }
         } else setPlayerTurn(nextPlayer)
         return result
@@ -103,22 +103,27 @@ class NormalRoom constructor(
     }
 
     private suspend fun chooseCard(player: PlayerSession, card: Card): Boolean {
-        if (currentPlayer?.id == player.id) {
-            return currentRound?.let {
-                player.chooseCard(it, card)
-            } ?: false
+        val currentPlayer = currentPlayer ?: return false
+        if (currentPlayer.id == player.id) {
+            val currentRound = currentRound ?: return false
+            return player.chooseCard(currentRound, card)
         }
         return false
     }
 
-    override suspend fun endRound() {
-        currentRound?.let {
-            it.endRound()
-            currentPlayer = it.owner
-            playerNotifier.onRoundEnded(this)
-            delay(roundEndDelay)
-            drawCards(it.owner)
-        } ?: throw IllegalStateException("No round started")
+    override suspend fun endRound(player: PlayerSession): Boolean {
+        val currentId = currentPlayer?.id ?: return false
+        if (currentId == player.id) {
+            currentRound?.let {
+                it.endRound()
+                currentPlayer = it.owner
+                playerNotifier.onRoundEnded(this)
+                delay(roundEndDelay)
+                drawCards(it.owner)
+                return true
+            } ?: throw IllegalStateException("No round started")
+        }
+        return false
     }
 
     override suspend fun start() {

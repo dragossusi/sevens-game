@@ -46,7 +46,7 @@ class AiPlayerListener(
 
     override suspend fun onRoundStarted(response: NewRoundResponse) {
         if (response.currentPlayerId == player.id) {
-            room.addCard(player.player, player.pickCard())
+            room.addCard(player.session, player.pickCard())
         }
     }
 
@@ -54,9 +54,9 @@ class AiPlayerListener(
         if (playerTurn.currentPlayerId == player.id) {
             val canEnd = playerTurn.canEnd(room.type)
             val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
-            if (card == null && canEnd) room.newRound()
+            if (card == null && canEnd) room.newRound(player.session)
             else room.addCard(
-                player.player,
+                player.session,
                 card ?: player.hand!!.chooseRandomCard()
             )
         }

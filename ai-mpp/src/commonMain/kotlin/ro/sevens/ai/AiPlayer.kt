@@ -28,14 +28,14 @@ import ro.sevens.payload.extensions.pointsCount
  *
  */
 class AiPlayer constructor(
-    val player: PlayerSession,
+    val session: PlayerSession,
     val type: GameTypeData
 ) {
     val id: Long
-        get() = player.id
+        get() = session.id
 
     val hand: Hand?
-        get() = player.hand
+        get() = session.hand
 
     fun pickCard(): Card {
         val hand = hand!!

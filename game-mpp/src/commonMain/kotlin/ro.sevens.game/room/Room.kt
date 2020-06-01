@@ -67,7 +67,7 @@ interface Room : RoomListeners {
 
     suspend fun addCard(player: PlayerSession, card: Card): Boolean
 
-    suspend fun endRound()
+    suspend fun endRound(player: PlayerSession): Boolean
 
     suspend fun start()
 
@@ -91,8 +91,8 @@ val Room.maxPlayers: Int
     get() = type.maxPlayers
 
 
-suspend fun Room.newRound() {
-    endRound()
+suspend fun Room.newRound(player: PlayerSession) {
+    endRound(player)
     delay(roundEndDelay)
     if (remainingCards.isNotEmpty())
         startRound()

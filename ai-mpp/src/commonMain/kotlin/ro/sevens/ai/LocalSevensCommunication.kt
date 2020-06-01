@@ -59,7 +59,7 @@ class LocalSevensCommunication constructor(
 
     override fun endRound() {
         launch {
-            aiRoom.room.newRound()
+            aiRoom.room.newRound(playerSession)
         }
     }
 
