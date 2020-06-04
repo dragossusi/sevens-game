@@ -1,9 +1,12 @@
 package ro.sevens.game
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import ro.sevens.game.room.Room
+import ro.sevens.game.round.Round
 import ro.sevens.payload.Card
 import ro.sevens.payload.Player
 import ro.sevens.payload.game.SimplePlayerResponse
@@ -35,6 +38,8 @@ class PlayerSession constructor(
     val player: Player
 ) {
 
+    private val mutex = Mutex()
+
     @Transient
     var hand: Hand? = null
 
@@ -53,12 +58,13 @@ class PlayerSession constructor(
     suspend fun chooseCard(round: Round, card: Card): Boolean {
         val hand = hand ?: return false
 
-        if (hand.chooseCard(card)) {
-            round.addCard(card, this)
-            hand.cards
-            return true
+        mutex.withLock(hand) {
+            if (hand.chooseCard(mutex, card)) {
+                round.addCard(card, this)
+                hand.cards
+                return true
+            }
         }
-
         return false
     }
 

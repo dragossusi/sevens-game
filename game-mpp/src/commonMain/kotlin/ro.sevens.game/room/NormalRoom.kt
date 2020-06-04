@@ -4,11 +4,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ro.sevens.game.Hand
+import ro.sevens.game.NormalRound
 import ro.sevens.game.PlayerSession
-import ro.sevens.game.Round
 import ro.sevens.game.deck.Deck
 import ro.sevens.game.deck.DeckProvider
 import ro.sevens.game.listener.PlayerNotifier
+import ro.sevens.game.round.Round
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
@@ -59,7 +60,7 @@ class NormalRoom constructor(
     override val remainingCards: List<Card>
         get() = _remainingCards
 
-    override val rounds = mutableListOf<Round>()
+    override val rounds = mutableListOf<NormalRound>()
 
     override var currentPlayer: PlayerSession? = null
 
@@ -70,10 +71,11 @@ class NormalRoom constructor(
 
     override suspend fun startRound() {
         val player = currentPlayer!!
-        val round = Round(player, players.count())
+        val round = NormalRound(player, players.count())
         rounds += round
         currentRound = round
         drawCards(player)
+        round.start()
         playerNotifier.onRoundStarted(this)
     }
 
@@ -83,11 +85,13 @@ class NormalRoom constructor(
         }
         if (!result) return result
         val nextPlayer = nextPlayer!!
-        if (nextPlayer == startingPlayer) {
-            if (currentRound!!.canCut(nextPlayer, playerCount)) {
+        val roundStartingPlayer = currentRound!!.startingPlayer
+        if (nextPlayer.id == roundStartingPlayer.id) {
+            if (currentRound!!.canContinue(nextPlayer, playerCount)) {
                 setPlayerTurn(nextPlayer)
             } else {
-                newRound(player)
+                val res = newRound(nextPlayer)
+                if (!res) throw Exception("failed to start new round")
             }
         } else setPlayerTurn(nextPlayer)
         return result
@@ -112,17 +116,15 @@ class NormalRoom constructor(
     }
 
     override suspend fun endRound(player: PlayerSession): Boolean {
-        val currentId = currentPlayer?.id ?: return false
-        if (currentId == player.id) {
-            currentRound?.let {
-                it.endRound()
+        currentRound?.let {
+            if (it.end(player)) {
                 currentPlayer = it.owner
                 playerNotifier.onRoundEnded(this)
                 delay(roundEndDelay)
                 drawCards(it.owner)
                 return true
-            } ?: throw IllegalStateException("No round started")
-        }
+            }
+        } ?: throw IllegalStateException("No round started")
         return false
     }
 

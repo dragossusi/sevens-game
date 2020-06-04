@@ -1,5 +1,6 @@
 package ro.sevens.game
 
+import kotlinx.coroutines.sync.Mutex
 import ro.sevens.payload.Card
 
 /**
@@ -49,7 +50,7 @@ class Hand private constructor(cards: MutableList<Card>) : ListContainer<Card> {
         }
     }
 
-    fun chooseCard(card: Card): Boolean {
+    suspend fun chooseCard(mutex: Mutex, card: Card): Boolean {
         val index = _cards.indexOfFirst { it.theSame(card) }
         if (index == -1) return false
         else _cards.removeAt(index)

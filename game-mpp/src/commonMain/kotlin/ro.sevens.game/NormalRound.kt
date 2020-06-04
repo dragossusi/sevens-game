@@ -2,6 +2,7 @@ package ro.sevens.game
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ro.sevens.game.round.Round
 import ro.sevens.payload.Card
 
 /**
@@ -23,21 +24,23 @@ import ro.sevens.payload.Card
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class Round constructor(
-    var owner: PlayerSession,
+class NormalRound constructor(
+    override val startingPlayer: PlayerSession,
     val numOfPlayers: Int
-) {
+) : Round {
+    override var owner: PlayerSession = startingPlayer
     private val _cards = mutableListOf<Card>()
     private val mutex = Mutex()
+    private var status: Status = Status.NONE
 
-    val cards: List<Card>
+    override val cards: List<Card>
         get() = _cards
 
-    suspend fun addCard(card: Card, from: PlayerSession) {
+    override suspend fun addCard(card: Card, from: PlayerSession) {
         mutex.withLock(this) {
-            val lastCard = cards.lastOrNull()
-            lastCard?.let {
-                if (card.canCut(lastCard, numOfPlayers)) {
+            val firstCard = cards.firstOrNull()
+            firstCard?.let {
+                if (card.canCut(firstCard, numOfPlayers)) {
                     owner = from
                 }
             }
@@ -45,17 +48,31 @@ class Round constructor(
         }
     }
 
-    fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean {
-        val lastCard = cards.first()
+    override fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean {
+        val firstCard = cards.first()
         playerSession.hand!!.cards.forEach {
-            if (it.canCut(lastCard, playerCount))
+            if (it.canCut(firstCard, playerCount))
                 return true
         }
         return false
     }
 
-    fun endRound() {
+    override fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean {
+        return playerSession.id != owner.id && canCut(playerSession, playerCount)
+    }
+
+    override fun start(): Boolean {
+        if (status != Status.NONE) return false
+        status = Status.STARTED
+        return true
+    }
+
+    override suspend fun end(playerSession: PlayerSession): Boolean {
+        if (playerSession.id != startingPlayer.id) return false
+        if (status != Status.STARTED) return false
         owner.hand!!.addWonCards(cards)
+        status = Status.ENDED
+        return true
     }
 
     override fun toString(): String {
@@ -63,6 +80,12 @@ class Round constructor(
                 "owner=${owner.player.name}, \n" +
                 "cards=$_cards\n" +
                 ")"
+    }
+
+    enum class Status {
+        NONE,
+        STARTED,
+        ENDED
     }
 
 

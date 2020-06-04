@@ -3,9 +3,9 @@ package ro.sevens.game.room
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import ro.sevens.game.PlayerSession
-import ro.sevens.game.Round
 import ro.sevens.game.deck.Deck
 import ro.sevens.game.listener.*
+import ro.sevens.game.round.Round
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
 import ro.sevens.payload.game.SimplePlayerResponse
@@ -91,11 +91,13 @@ val Room.maxPlayers: Int
     get() = type.maxPlayers
 
 
-suspend fun Room.newRound(player: PlayerSession) {
-    endRound(player)
+suspend fun Room.newRound(player: PlayerSession): Boolean {
+    val result = endRound(player)
+    if (!result) return result
     delay(roundEndDelay)
     if (remainingCards.isNotEmpty())
         startRound()
+    return result
 }
 
 val Room.simplePlayers: List<SimplePlayerResponse>
