@@ -24,12 +24,12 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version")
 
                 // modules
-                implementation project(":payload-mpp")
-                implementation project(":logger-mpp")
-                implementation project(":game-listener-mpp")
+                implementation project(":payload")
+                implementation project(":logger")
+                implementation project(":game-listener")
 
                 //local
-                implementation project(":game-mpp")
+                implementation project(":game")
             }
         }
         commonTest {

@@ -1,13 +1,13 @@
 rootProject.name = 'sevens-game'
-include ":game-mpp"
-include ":ai-mpp"
+include ":game"
+include ":ai"
 
 
 // preload
-include ":payload-mpp"
-project(":payload-mpp").projectDir = file("../sevens-payload/mpp")
+include ":payload"
+project(":payload").projectDir = file("../sevens-payload/payload")
 //core
-include ":logger-mpp"
-project(":logger-mpp").projectDir = file("../sevens-core/logger-mpp")
-include ":game-listener-mpp"
-project(":game-listener-mpp").projectDir = file("../sevens-core/game-listener-mpp")
+include ":logger"
+project(":logger").projectDir = file("../sevens-core/logger")
+include ":game-listener"
+project(":game-listener").projectDir = file("../sevens-core/game-listener")
