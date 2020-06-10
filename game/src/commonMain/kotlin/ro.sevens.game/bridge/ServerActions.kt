@@ -1,7 +1,7 @@
 package ro.sevens.game.bridge
 
 interface ServerActions : ClientActions {
-    fun connect()
+    suspend fun connect()
 
     fun disconnect()
 }
