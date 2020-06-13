@@ -3,6 +3,7 @@ package ro.sevens.ai
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.newRound
 import ro.sevens.logger.TagLogger
@@ -44,29 +45,33 @@ class AiPlayerListener(
         tagLogger?.w("TODO Not yet implemented")
     }
 
-    override suspend fun onRoundStarted(response: NewRoundResponse) {
-        if (response.currentPlayerId == player.id) {
-            room.addCard(player.session, player.pickCard())
+    override fun onRoundStarted(response: NewRoundResponse) {
+        launch {
+            if (response.currentPlayerId == player.id) {
+                room.addCard(player.session, player.pickCard())
+            }
         }
     }
 
-    override suspend fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
-        if (playerTurn.currentPlayerId == player.id) {
-            val canEnd = playerTurn.canEnd(room.type)
-            val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
-            if (card == null && canEnd) room.newRound(player.session)
-            else room.addCard(
-                player.session,
-                card ?: player.hand!!.chooseRandomCard()
-            )
+    override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
+        launch {
+            if (playerTurn.currentPlayerId == player.id) {
+                val canEnd = playerTurn.canEnd(room.type)
+                val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
+                if (card == null && canEnd) room.newRound(player.session)
+                else room.addCard(
+                    player.session,
+                    card ?: player.hand!!.chooseRandomCard()
+                )
+            }
         }
     }
 
-    override suspend fun onRoomConnected(id: Long) {
+    override fun onRoomConnected(id: Long) {
 //        tagLogger?.w("TODO onRoomConnected")
     }
 
-    override suspend fun onRoundEnded(response: NewRoundResponse) {
+    override fun onRoundEnded(response: NewRoundResponse) {
 //        tagLogger?.w("TODO onRoundEnded")
     }
 }

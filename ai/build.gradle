@@ -21,7 +21,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
 
                 // modules
                 implementation project(":payload")
@@ -41,18 +41,15 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk7')
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
             }
         }
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutines_version"
             }
         }
         iosMain {
             dependencies {
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
             }
         }
     }

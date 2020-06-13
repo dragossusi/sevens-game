@@ -23,6 +23,6 @@ import ro.sevens.payload.Card
  *
  */
 interface ClientActions {
-    suspend fun placeCard(card: Card)
-    suspend fun endRound()
+    fun placeCard(card: Card)
+    fun endRound()
 }

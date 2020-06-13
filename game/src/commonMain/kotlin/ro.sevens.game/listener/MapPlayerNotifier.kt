@@ -56,7 +56,7 @@ class MapPlayerNotifier(
                 val hand = it.key.hand!!
                 it.value.onRoundStarted(
                     NewRoundResponse(
-                        hand.cards,
+                        hand.cards.toTypedArray(),
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
@@ -95,7 +95,7 @@ class MapPlayerNotifier(
                 val hand = key.hand!!
                 value.onRoundEnded(
                     NewRoundResponse(
-                        hand.cards,
+                        hand.cards.toTypedArray(),
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,

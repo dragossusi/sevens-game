@@ -1,7 +1,7 @@
 package ro.sevens.game.room
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.sync.Mutex
 import ro.sevens.game.PlayerSession
 import ro.sevens.game.deck.Deck
 import ro.sevens.game.listener.*
@@ -29,9 +29,7 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface Room : RoomListeners {
-
-    val mutex: Mutex
+interface Room : RoomListeners, CoroutineScope {
 
     val roundEndDelay: Long
     val id: Long
@@ -95,7 +93,7 @@ suspend fun Room.newRound(player: PlayerSession): Boolean {
     val result = endRound(player)
     if (!result) return result
     delay(roundEndDelay)
-    if (remainingCards.isNotEmpty())
+    if (remainingCards.isNotEmpty() || currentPlayer!!.cardsCount != 0)
         startRound()
     return result
 }

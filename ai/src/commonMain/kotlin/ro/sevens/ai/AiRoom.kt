@@ -40,7 +40,7 @@ class AiRoom(
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger)
 ) {
 
-    internal val room: Room = NormalRoom(id, type, deckProvider, tagLogger, playerNotifier, 1250L)
+    internal val room: Room = NormalRoom(id, type, deckProvider, tagLogger, playerNotifier, dispatcher, 1250L)
 
     suspend fun addAi(name: String) {
         val playerSession = PlayerSession(

@@ -33,19 +33,19 @@ class LocalOnRoomChanged(
 //        TODO("Not yet implemented")
     }
 
-    override suspend fun onRoundStarted(response: NewRoundResponse) {
+    override fun onRoundStarted(response: NewRoundResponse) {
         sevensCommunication.onRoundStarted?.onRoundStarted(response)
     }
 
-    override suspend fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
+    override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
         sevensCommunication.onPlayerTurn?.onPlayerTurn(playerTurn)
     }
 
-    override suspend fun onRoomConnected(id: Long) {
+    override fun onRoomConnected(id: Long) {
         sevensCommunication.onRoomConnected?.onRoomConnected(id)
     }
 
-    override suspend fun onRoundEnded(response: NewRoundResponse) {
+    override fun onRoundEnded(response: NewRoundResponse) {
         sevensCommunication.onRoundEnded?.onRoundEnded(response)
     }
 }

@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ro.sevens.game.PlayerSession
-import ro.sevens.game.bridge.ServerActions
 import ro.sevens.game.bridge.SevensCommunication
 import ro.sevens.game.listener.*
 import ro.sevens.game.room.newRound
@@ -36,7 +35,7 @@ class LocalSevensCommunication constructor(
     private val aiRoom: AiRoom,
     player: Player,
     dispatcher: CoroutineDispatcher
-) : SevensCommunication, ServerActions, CoroutineScope {
+) : SevensCommunication, CoroutineScope {
 
     private val playerSession = PlayerSession(aiRoom.room, player)
     private val localOnRoomChanged = LocalOnRoomChanged(this)
