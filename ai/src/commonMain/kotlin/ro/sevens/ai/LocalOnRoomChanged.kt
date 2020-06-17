@@ -2,6 +2,8 @@ package ro.sevens.ai
 
 import ro.sevens.game.bridge.SevensCommunication
 import ro.sevens.game.room.Room
+import ro.sevens.logger.TagLogger
+import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
 
@@ -26,18 +28,26 @@ import ro.sevens.payload.game.PlayerTurnResponse
  *
  */
 class LocalOnRoomChanged(
-    val sevensCommunication: SevensCommunication
+    val sevensCommunication: SevensCommunication,
+    private val tagLogger: TagLogger?
 ) : Room.OnRoomChanged {
 
     override suspend fun onRoomStopped() {
 //        TODO("Not yet implemented")
     }
 
+    override fun onGameEnded(response: GameEndResponse) {
+        tagLogger?.i("onGameEnded: $response")
+        sevensCommunication.onGameEnded?.onGameEnded(response)
+    }
+
     override fun onRoundStarted(response: NewRoundResponse) {
+        tagLogger?.i("onRoundStarted: $response")
         sevensCommunication.onRoundStarted?.onRoundStarted(response)
     }
 
     override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
+        tagLogger?.i("onPlayerTurn: $playerTurn")
         sevensCommunication.onPlayerTurn?.onPlayerTurn(playerTurn)
     }
 

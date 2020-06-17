@@ -68,6 +68,11 @@ class NormalRoom constructor(
     override val canJoin: Boolean
         get() = players.size < type.maxPlayers && status == RoomStatus.WAITING
 
+    override val canStartRound: Boolean
+        get() = players.all {
+            it.cardsCount != 0
+        }
+
     override suspend fun startRound() = withContext(coroutineContext) {
         val player = currentPlayer!!
         val round = NormalRound(player, players.count())
@@ -109,23 +114,34 @@ class NormalRoom constructor(
 
     override suspend fun start() = withContext(coroutineContext) {
         when (status) {
-            RoomStatus.WAITING -> {
+            RoomStatus.WAITING, RoomStatus.ENDED -> {
                 status = RoomStatus.IN_PROGRESS
                 currentPlayer = startingPlayer
                 initCards()
                 initHands()
                 startRound()
             }
-            RoomStatus.ENDED -> throw IllegalStateException("Room already stopped")
+            RoomStatus.STOPPED -> throw IllegalStateException("Room already stopped")
             RoomStatus.IN_PROGRESS -> throw IllegalStateException("Room already started")
+        }
+    }
+
+    override suspend fun endGame() = withContext(coroutineContext) {
+        when (status) {
+            RoomStatus.ENDED -> throw IllegalStateException("Game already ended")
+            else -> {
+                status = RoomStatus.ENDED
+                playerNotifier.onGameEnded(this@NormalRoom)
+            }
         }
     }
 
     override suspend fun stop() = withContext(coroutineContext) {
         when (status) {
-            RoomStatus.ENDED -> throw IllegalStateException("Room already stopped")
+            RoomStatus.STOPPED -> throw IllegalStateException("Room already stopped")
             else -> {
-                status = RoomStatus.ENDED
+                status = RoomStatus.STOPPED
+                playerNotifier.onRoomStopped(this@NormalRoom)
             }
         }
     }
@@ -180,7 +196,7 @@ class NormalRoom constructor(
         }
     }
 
-    private suspend fun drawCards(owner: PlayerSession) {
+    private fun drawCards(owner: PlayerSession) {
         val maxPlayers = type.maxPlayers
         while (owner.cardsCount <= 3 && remainingCards.isNotEmpty()) {
             var index = players.indexOf(owner)

@@ -3,7 +3,10 @@ package ro.sevens.game.listener
 import ro.sevens.game.PlayerSession
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.simplePlayers
+import ro.sevens.game.round.Round
+import ro.sevens.game.round.toResponse
 import ro.sevens.logger.TagLogger
+import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
 
@@ -44,7 +47,28 @@ class MapPlayerNotifier(
     override suspend fun onRoomStopped(room: Room) {
         room.run {
             tagLogger?.d("onRoomStopped ${room.id}")
-            TODO("Not yet implemented")
+            listeners.forEach {
+                it.value.onRoomStopped()
+            }
+        }
+    }
+
+    override suspend fun onGameEnded(room: Room) {
+        room.run {
+            tagLogger?.d("onGameEnded ${room.id}")
+            val simplePlayers = simplePlayers.toTypedArray()
+            listeners.forEach {
+                val hand = it.key.hand!!
+                it.value.onGameEnded(
+                    GameEndResponse(
+                        players = simplePlayers,
+                        winner = currentPlayer!!.id,
+                        wonPoints = hand.wonPointsCount,
+                        wonCards = hand.wonCardsCount,
+                        rounds = rounds.map(Round::toResponse).toTypedArray()
+                    )
+                )
+            }
         }
     }
 
@@ -60,7 +84,7 @@ class MapPlayerNotifier(
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards,
+                        currentRound!!.cards.toTypedArray(),
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount
                     )
@@ -99,7 +123,7 @@ class MapPlayerNotifier(
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards,
+                        currentRound!!.cards.toTypedArray(),
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount
                     )

@@ -3,6 +3,7 @@ package ro.sevens.game.round
 import ro.sevens.game.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.game.CardsContainer
+import ro.sevens.payload.game.RoundResponse
 
 /**
  * server
@@ -32,3 +33,5 @@ interface Round : CardsContainer {
     suspend fun end(playerSession: PlayerSession): Boolean
     fun start(): Boolean
 }
+
+fun Round.toResponse() = RoundResponse(startingPlayer.id, owner.id, cards)

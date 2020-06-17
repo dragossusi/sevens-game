@@ -1,7 +1,6 @@
 package ro.sevens.game.room
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import ro.sevens.game.PlayerSession
 import ro.sevens.game.deck.Deck
 import ro.sevens.game.listener.*
@@ -58,6 +57,7 @@ interface Room : RoomListeners, CoroutineScope {
         }
 
     val canJoin: Boolean
+    val canStartRound: Boolean
 
     //funs
 
@@ -69,6 +69,8 @@ interface Room : RoomListeners, CoroutineScope {
 
     suspend fun start()
 
+    suspend fun endGame()
+
     suspend fun stop()
 
     suspend fun addPlayerSession(
@@ -76,7 +78,7 @@ interface Room : RoomListeners, CoroutineScope {
         onRoomChanged: OnRoomChanged
     ): Boolean
 
-    interface OnRoomChanged : OnRoundStarted, OnPlayerTurn, OnRoomConnected, OnRoundEnded {
+    interface OnRoomChanged : OnRoundStarted, OnPlayerTurn, OnRoomConnected, OnRoundEnded, OnGameEnded {
         suspend fun onRoomStopped()
     }
 
@@ -92,9 +94,8 @@ val Room.maxPlayers: Int
 suspend fun Room.newRound(player: PlayerSession): Boolean {
     val result = endRound(player)
     if (!result) return result
-    delay(roundEndDelay)
-    if (remainingCards.isNotEmpty() || currentPlayer!!.cardsCount != 0)
-        startRound()
+    if (canStartRound) startRound()
+    else endGame()
     return result
 }
 

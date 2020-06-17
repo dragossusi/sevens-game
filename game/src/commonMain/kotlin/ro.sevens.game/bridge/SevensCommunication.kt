@@ -29,4 +29,5 @@ interface SevensCommunication : ServerActions {
 
     var onRoomConnected: OnRoomConnected?
     var onRoundStarted: OnRoundStarted?
+    var onGameEnded: OnGameEnded?
 }

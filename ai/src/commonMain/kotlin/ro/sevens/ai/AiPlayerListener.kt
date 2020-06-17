@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.newRound
 import ro.sevens.logger.TagLogger
+import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
 import kotlin.coroutines.CoroutineContext
@@ -43,6 +44,9 @@ class AiPlayerListener(
 
     override suspend fun onRoomStopped() {
         tagLogger?.w("TODO Not yet implemented")
+    }
+
+    override fun onGameEnded(rounds: GameEndResponse) {
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {

@@ -8,6 +8,7 @@ import ro.sevens.game.PlayerSession
 import ro.sevens.game.bridge.SevensCommunication
 import ro.sevens.game.listener.*
 import ro.sevens.game.room.newRound
+import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.Player
 import kotlin.coroutines.CoroutineContext
@@ -34,11 +35,12 @@ import kotlin.coroutines.CoroutineContext
 class LocalSevensCommunication constructor(
     private val aiRoom: AiRoom,
     player: Player,
-    dispatcher: CoroutineDispatcher
+    dispatcher: CoroutineDispatcher,
+    tagLogger: TagLogger
 ) : SevensCommunication, CoroutineScope {
 
     private val playerSession = PlayerSession(aiRoom.room, player)
-    private val localOnRoomChanged = LocalOnRoomChanged(this)
+    private val localOnRoomChanged = LocalOnRoomChanged(this, tagLogger)
 
     override val coroutineContext: CoroutineContext = dispatcher + Job()
 
@@ -49,6 +51,7 @@ class LocalSevensCommunication constructor(
     override var onPlayerTurn: OnPlayerTurn? = null
     override var onRoundEnded: OnRoundEnded? = null
     override var onRoomStopped: OnRoomStopped? = null
+    override var onGameEnded: OnGameEnded? = null
 
     override fun placeCard(card: Card) {
         launch {

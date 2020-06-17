@@ -42,7 +42,7 @@ class AiRoom(
 
     internal val room: Room = NormalRoom(id, type, deckProvider, tagLogger, playerNotifier, dispatcher, 1250L)
 
-    suspend fun addAi(name: String) {
+    suspend fun addAi(name: String, tagLogger: TagLogger? = null) {
         val playerSession = PlayerSession(
             room,
             Player(-room.players.size.toLong(), name, null)
@@ -50,7 +50,7 @@ class AiRoom(
         val listener = AiPlayerListener(
             player = AiPlayer(playerSession, room.type),
             room = room,
-            tagLogger = null, //todo change me
+            tagLogger = tagLogger, //todo change me
             dispather = dispatcher
         )
         room.addPlayerSession(playerSession, listener)

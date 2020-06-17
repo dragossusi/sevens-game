@@ -27,4 +27,5 @@ interface PlayerNotifier : RoomListeners {
     suspend fun onRoundStarted(room: Room)
     suspend fun onPlayerTurn(room: Room)
     suspend fun onRoundEnded(room: Room)
+    suspend fun onGameEnded(room: Room)
 }
