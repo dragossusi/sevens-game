@@ -30,6 +30,7 @@ interface Round : CardsContainer {
     fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean
     fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean
     suspend fun addCard(card: Card, from: PlayerSession)
+    suspend fun canAddCard(card: Card, from: PlayerSession): Boolean
     suspend fun end(playerSession: PlayerSession): Boolean
     fun start(): Boolean
 }

@@ -6,6 +6,7 @@ import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
+import ro.sevens.payload.game.SimplePlayerResponse
 
 
 /**
@@ -39,6 +40,11 @@ class LocalOnRoomChanged(
     override fun onGameEnded(response: GameEndResponse) {
         tagLogger?.i("onGameEnded: $response")
         sevensCommunication.onGameEnded?.onGameEnded(response)
+    }
+
+    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
+        tagLogger?.i("onGameStarted: $players")
+        sevensCommunication.onGameStarted?.onGameStarted(players)
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {

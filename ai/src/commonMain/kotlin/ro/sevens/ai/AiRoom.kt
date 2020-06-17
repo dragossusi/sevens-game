@@ -31,12 +31,13 @@ import ro.sevens.payload.base.GameTypeData
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class AiRoom(
+class AiRoom constructor(
     id: Long,
     type: GameTypeData,
     deckProvider: DeckProvider,
     private val tagLogger: TagLogger?,
     private val dispatcher: CoroutineDispatcher,
+    private val operationDelay: Long,
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger)
 ) {
 
@@ -51,7 +52,8 @@ class AiRoom(
             player = AiPlayer(playerSession, room.type),
             room = room,
             tagLogger = tagLogger, //todo change me
-            dispather = dispatcher
+            dispather = dispatcher,
+            operationDelay = operationDelay
         )
         room.addPlayerSession(playerSession, listener)
     }

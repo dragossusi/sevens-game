@@ -78,7 +78,7 @@ interface Room : RoomListeners, CoroutineScope {
         onRoomChanged: OnRoomChanged
     ): Boolean
 
-    interface OnRoomChanged : OnRoundStarted, OnPlayerTurn, OnRoomConnected, OnRoundEnded, OnGameEnded {
+    interface OnRoomChanged : OnRoundStarted, OnPlayerTurn, OnRoomConnected, OnRoundEnded, OnGameStarted, OnGameEnded {
         suspend fun onRoomStopped()
     }
 

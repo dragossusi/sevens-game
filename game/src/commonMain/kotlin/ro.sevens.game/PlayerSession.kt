@@ -44,13 +44,13 @@ class PlayerSession constructor(
     var hand: Hand? = null
 
     val cardsCount: Int
-        get() = hand!!.cardsCount
+        get() = hand?.cardsCount ?: 0
 
     val wonCardsCount: Int
-        get() = hand!!.wonCardsCount
+        get() = hand?.wonCardsCount ?: 0
 
     val wonPointsCount: Int
-        get() = hand!!.wonPointsCount
+        get() = hand?.wonPointsCount ?: 0
 
     val id: Long
         get() = player.id
@@ -59,7 +59,7 @@ class PlayerSession constructor(
         val hand = hand ?: return false
 
         mutex.withLock(hand) {
-            if (hand.chooseCard(mutex, card)) {
+            if (hand.chooseCard(card)) {
                 round.addCard(card, this)
                 hand.cards
                 return true

@@ -7,7 +7,6 @@ import org.junit.Test
 import ro.sevens.game.deck.DeckProviderImpl
 import ro.sevens.logger.ConsoleLogger
 import ro.sevens.payload.enums.GameTypeEnum
-import java.util.concurrent.Executors
 
 /**
  * sevens-game
@@ -38,7 +37,8 @@ class AiTest {
             GameTypeEnum.DUEL,
             DeckProviderImpl,
             ConsoleLogger("AiRoom"),
-            Dispatchers.Unconfined
+            Dispatchers.Unconfined,
+            0L
         )
 //        val communication = LocalSevensCommunication(
 //            aiRoom = room,

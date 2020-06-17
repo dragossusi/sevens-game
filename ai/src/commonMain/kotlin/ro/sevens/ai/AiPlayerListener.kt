@@ -1,15 +1,13 @@
 package ro.sevens.ai
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.newRound
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
+import ro.sevens.payload.game.SimplePlayerResponse
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -35,6 +33,7 @@ class AiPlayerListener(
     private val player: AiPlayer,
     private val room: Room,
     private val tagLogger: TagLogger?,
+    private val operationDelay: Long,
     dispather: CoroutineDispatcher
 ) : Room.OnRoomChanged, CoroutineScope {
 
@@ -46,11 +45,15 @@ class AiPlayerListener(
         tagLogger?.w("TODO Not yet implemented")
     }
 
-    override fun onGameEnded(rounds: GameEndResponse) {
+    override fun onGameEnded(response: GameEndResponse) {
+    }
+
+    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {
         launch {
+            delay(operationDelay)
             if (response.currentPlayerId == player.id) {
                 room.addCard(player.session, player.pickCard())
             }
@@ -59,6 +62,7 @@ class AiPlayerListener(
 
     override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
         launch {
+            delay(operationDelay)
             if (playerTurn.currentPlayerId == player.id) {
                 val canEnd = playerTurn.canEnd(room.type)
                 val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)

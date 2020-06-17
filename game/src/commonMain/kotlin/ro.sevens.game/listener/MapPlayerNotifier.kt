@@ -72,10 +72,20 @@ class MapPlayerNotifier(
         }
     }
 
+    override suspend fun onGameStarted(room: Room) {
+        room.run {
+            tagLogger?.d("onGameStarted ${room.id}")
+            val simplePlayers = simplePlayers.toTypedArray()
+            listeners.forEach {
+                it.value.onGameStarted(simplePlayers)
+            }
+        }
+    }
+
     override suspend fun onRoundStarted(room: Room) {
         room.run {
             tagLogger?.d("onRoundStarted ${room.id}")
-            val simplePlayers = simplePlayers
+            val simplePlayers = simplePlayers.toTypedArray()
             listeners.forEach {
                 val hand = it.key.hand!!
                 it.value.onRoundStarted(
@@ -96,7 +106,7 @@ class MapPlayerNotifier(
     override suspend fun onPlayerTurn(room: Room) {
         room.run {
             tagLogger?.d("onPlayerTurn ${id}")
-            val simplePlayers = simplePlayers
+            val simplePlayers = simplePlayers.toTypedArray()
             listeners.forEach {
                 it.value.onPlayerTurn(
                     PlayerTurnResponse(
@@ -104,7 +114,7 @@ class MapPlayerNotifier(
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards
+                        currentRound!!.cards.toTypedArray()
                     )
                 )
             }
@@ -114,7 +124,7 @@ class MapPlayerNotifier(
     override suspend fun onRoundEnded(room: Room) {
         room.run {
             tagLogger?.d("onRoundEnded ${room.rounds.last()}")
-            val simplePlayers = simplePlayers
+            val simplePlayers = simplePlayers.toTypedArray()
             listeners.forEach { (key, value) ->
                 val hand = key.hand!!
                 value.onRoundEnded(

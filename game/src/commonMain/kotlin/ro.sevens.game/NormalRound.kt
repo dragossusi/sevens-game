@@ -36,6 +36,11 @@ class NormalRound constructor(
     override val cards: List<Card>
         get() = _cards
 
+    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
+        return if (_cards.size < numOfPlayers) true
+        else card.canCut(cards.first(), numOfPlayers)
+    }
+
     override suspend fun addCard(card: Card, from: PlayerSession) {
         mutex.withLock(this) {
             val firstCard = cards.firstOrNull()

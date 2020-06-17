@@ -56,7 +56,7 @@ class AiPlayer constructor(
         return selectedCard
     }
 
-    fun pickCard(placedCards: List<Card>, canEnd: Boolean): Card? {
+    fun pickCard(placedCards: Array<Card>, canEnd: Boolean): Card? {
         if (placedCards.isEmpty()) return pickCard()
         val hand = hand!!
         val firstCard = placedCards.first()

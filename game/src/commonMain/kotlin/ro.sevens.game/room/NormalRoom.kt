@@ -83,6 +83,18 @@ class NormalRoom constructor(
         playerNotifier.onRoundStarted(this@NormalRoom)
     }
 
+    override suspend fun endRound(player: PlayerSession): Boolean = withContext(coroutineContext) {
+        currentRound?.let {
+            if (it.end(player)) {
+                currentPlayer = it.owner
+                playerNotifier.onRoundEnded(this@NormalRoom)
+                delay(roundEndDelay)
+                return@withContext true
+            }
+        } ?: throw IllegalStateException("No round started")
+        return@withContext false
+    }
+
     override suspend fun addCard(player: PlayerSession, card: Card): Boolean = withContext(coroutineContext) {
         val result = chooseCard(player, card)
         if (!result) return@withContext result
@@ -99,22 +111,10 @@ class NormalRoom constructor(
         return@withContext result
     }
 
-    override suspend fun endRound(player: PlayerSession): Boolean = withContext(coroutineContext) {
-        currentRound?.let {
-            if (it.end(player)) {
-                currentPlayer = it.owner
-                playerNotifier.onRoundEnded(this@NormalRoom)
-                delay(roundEndDelay)
-                drawCards(it.owner)
-                return@withContext true
-            }
-        } ?: throw IllegalStateException("No round started")
-        return@withContext false
-    }
-
     override suspend fun start() = withContext(coroutineContext) {
         when (status) {
             RoomStatus.WAITING, RoomStatus.ENDED -> {
+                playerNotifier.onGameStarted(this@NormalRoom)
                 status = RoomStatus.IN_PROGRESS
                 currentPlayer = startingPlayer
                 initCards()
@@ -169,10 +169,6 @@ class NormalRoom constructor(
 
     private suspend fun setPlayerTurn(player: PlayerSession) {
         currentPlayer = player
-        dispatchPlayerTurn()
-    }
-
-    private suspend fun dispatchPlayerTurn() {
         playerNotifier.onPlayerTurn(this)
     }
 
