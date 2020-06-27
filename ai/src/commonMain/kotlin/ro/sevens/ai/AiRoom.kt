@@ -41,12 +41,23 @@ class AiRoom constructor(
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger)
 ) {
 
-    internal val room: Room = NormalRoom(id, type, deckProvider, tagLogger, playerNotifier, dispatcher, 1250L)
+    val type: GameTypeData
+        get() = room.type
+
+    internal val room: Room = NormalRoom(
+        id = id,
+        type = type,
+        deckProvider = deckProvider,
+        tagLogger = tagLogger,
+        playerNotifier = playerNotifier,
+        coroutineContext = dispatcher,
+        roundEndDelay = 1250L
+    )
 
     suspend fun addAi(name: String, tagLogger: TagLogger? = null) {
         val playerSession = PlayerSession(
             room,
-            Player(-room.players.size.toLong(), name, null)
+            Player(-room.players.size.toLong() - 1L, name, null)
         )
         val listener = AiPlayerListener(
             player = AiPlayer(playerSession, room.type),

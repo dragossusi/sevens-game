@@ -6,8 +6,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ro.sevens.game.PlayerSession
 import ro.sevens.game.bridge.AbsSevensCommunication
-import ro.sevens.game.bridge.SevensCommunication
-import ro.sevens.game.listener.*
 import ro.sevens.game.room.newRound
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
@@ -60,7 +58,8 @@ class LocalSevensCommunication constructor(
     override fun connect() {
         launch {
             aiRoom.addPlayer(playerSession, localOnRoomChanged)
-            aiRoom.addAi("AI")
+            for (i in 1 until aiRoom.type.maxPlayers)
+                aiRoom.addAi("AI $i")
         }
     }
 

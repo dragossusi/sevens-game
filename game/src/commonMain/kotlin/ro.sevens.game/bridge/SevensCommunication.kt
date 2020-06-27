@@ -1,6 +1,7 @@
 package ro.sevens.game.bridge
 
 import ro.sevens.game.listener.*
+import ro.sevens.payload.base.GameTypeData
 
 /**
  * sevens-client
@@ -22,6 +23,7 @@ import ro.sevens.game.listener.*
  *
  */
 interface SevensCommunication : ServerActions {
+
     var onRoomStarted: OnRoomStarted?
     var onRoomStopped: OnRoomStopped?
     var onPlayerTurn: OnPlayerTurn?
