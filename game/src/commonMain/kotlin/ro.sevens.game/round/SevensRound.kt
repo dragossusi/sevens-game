@@ -1,9 +1,10 @@
-package ro.sevens.game
+package ro.sevens.game.round
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ro.sevens.game.round.Round
+import ro.sevens.game.session.SevensPlayerSession
 import ro.sevens.payload.Card
+import ro.sevens.payload.canCut
 
 /**
  * server
@@ -24,11 +25,11 @@ import ro.sevens.payload.Card
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class NormalRound constructor(
-    override val startingPlayer: PlayerSession,
+class SevensRound constructor(
+    override val startingPlayer: SevensPlayerSession,
     val numOfPlayers: Int
-) : Round {
-    override var owner: PlayerSession = startingPlayer
+) : Round<SevensPlayerSession> {
+    override var owner: SevensPlayerSession = startingPlayer
     private val _cards = mutableListOf<Card>()
     private val mutex = Mutex()
     private var status: Status = Status.NONE
@@ -36,12 +37,12 @@ class NormalRound constructor(
     override val cards: List<Card>
         get() = _cards
 
-    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
+    override suspend fun canAddCard(card: Card, from: SevensPlayerSession): Boolean {
         return if (_cards.size < numOfPlayers) true
         else card.canCut(cards.first(), numOfPlayers)
     }
 
-    override suspend fun addCard(card: Card, from: PlayerSession) {
+    override suspend fun addCard(card: Card, from: SevensPlayerSession) {
         mutex.withLock(this) {
             val firstCard = cards.firstOrNull()
             firstCard?.let {
@@ -53,7 +54,7 @@ class NormalRound constructor(
         }
     }
 
-    override fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean {
+    override fun canCut(playerSession: SevensPlayerSession, playerCount: Int): Boolean {
         val firstCard = cards.first()
         playerSession.hand!!.cards.forEach {
             if (it.canCut(firstCard, playerCount))
@@ -62,7 +63,7 @@ class NormalRound constructor(
         return false
     }
 
-    override fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean {
+    override fun canContinue(playerSession: SevensPlayerSession, playerCount: Int): Boolean {
         return playerSession.id != owner.id && canCut(playerSession, playerCount)
     }
 
@@ -72,10 +73,10 @@ class NormalRound constructor(
         return true
     }
 
-    override suspend fun end(playerSession: PlayerSession): Boolean {
+    override suspend fun end(playerSession: SevensPlayerSession): Boolean {
         if (playerSession.id != startingPlayer.id) return false
         if (status != Status.STARTED) return false
-        owner.hand!!.addWonCards(cards)
+        owner.addWonCards(cards)
         status = Status.ENDED
         return true
     }

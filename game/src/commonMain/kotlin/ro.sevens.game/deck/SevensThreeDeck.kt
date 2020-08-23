@@ -21,10 +21,13 @@ import ro.sevens.payload.Card
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class NormalDeck : BaseDeck() {
+class SevensThreeDeck : BaseDeck() {
 
-    val _cards: List<Card> = mutableListOf<Card>().apply {
-        for (i in 7..14) {
+    private val _cards: List<Card> = mutableListOf<Card>().apply {
+        addAll(7)
+        add(Card(8, Card.Type.ROSIE))
+        add(Card(8, Card.Type.NEAGRA))
+        for (i in 9..14) {
             addAll(i)
         }
     }
@@ -32,8 +35,8 @@ class NormalDeck : BaseDeck() {
     override val cards: List<Card>
         get() = _cards
 
-    override fun toString(): String {
-        return cards.joinToString(",\n")
+    override fun shuffle(): List<Card> {
+        return _cards.shuffled()
     }
 
 }

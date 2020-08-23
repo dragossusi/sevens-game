@@ -5,6 +5,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import ro.sevens.game.deck.DeckProviderImpl
+import ro.sevens.game.room.MacaoRoom
+import ro.sevens.game.room.SevensRoom
 import ro.sevens.logger.ConsoleLogger
 import ro.sevens.payload.enums.GameTypeEnum
 
@@ -30,15 +32,21 @@ import ro.sevens.payload.enums.GameTypeEnum
 class AiTest {
 
     @Test
-    fun testAis() {
-
-        val room = AiRoom(
-            System.currentTimeMillis(),
-            GameTypeEnum.DUEL,
-            DeckProviderImpl,
-            ConsoleLogger("AiRoom"),
-            Dispatchers.Unconfined,
-            0L
+    fun testSevensAis() {
+        val sevensRoom = SevensRoom(
+            id = System.currentTimeMillis(),
+            type = GameTypeEnum.DUEL,
+            deckProvider = DeckProviderImpl,
+            tagLogger = ConsoleLogger("AiRoom"),
+            coroutineContext = Dispatchers.Unconfined,
+            roundEndDelay = 1250L
+        )
+        //todo
+        val aiRoom = SevensAiRoom(
+            tagLogger = ConsoleLogger("AiRoom"),
+            dispatcher = Dispatchers.Unconfined,
+            operationDelay = 0L,
+            room = sevensRoom
         )
 //        val communication = LocalSevensCommunication(
 //            aiRoom = room,
@@ -51,9 +59,22 @@ class AiTest {
 //            tagLogger = ConsoleLogger("Communication")
 //        )
         runBlocking {
-            room.addAi("asd")
-            room.addAi("asdfg")
+            aiRoom.addAi("asd")
+            aiRoom.addAi("asdfg")
             delay(100000)
         }
     }
+
+    @Test
+    fun testMacaoAis() {
+        val macaoRoom = MacaoRoom(
+            id = System.currentTimeMillis(),
+            type = GameTypeEnum.DUEL,
+            deckProvider = DeckProviderImpl,
+            tagLogger = ConsoleLogger("AiRoom"),
+            coroutineContext = Dispatchers.Unconfined,
+            roundEndDelay = 1250L
+        )
+    }
+
 }

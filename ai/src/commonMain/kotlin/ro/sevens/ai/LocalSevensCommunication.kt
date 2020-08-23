@@ -4,9 +4,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ro.sevens.game.PlayerSession
 import ro.sevens.game.bridge.AbsSevensCommunication
-import ro.sevens.game.room.newRound
+import ro.sevens.game.room.Room
+import ro.sevens.game.round.Round
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.Player
@@ -31,14 +32,15 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class LocalSevensCommunication constructor(
-    private val aiRoom: AiRoom,
+class LocalSevensCommunication<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constructor(
+    private val aiRoom: AiRoom<S, RD, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
-    tagLogger: TagLogger
+    tagLogger: TagLogger,
+    playerInit: (Room<S, RD>, Player) -> S
 ) : AbsSevensCommunication(), CoroutineScope {
 
-    private val playerSession = PlayerSession(aiRoom.room, player)
+    private val playerSession = playerInit(aiRoom.room, player)
     private val localOnRoomChanged = LocalOnRoomChanged(this, tagLogger)
 
     override val coroutineContext: CoroutineContext = dispatcher + Job()

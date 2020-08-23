@@ -1,7 +1,6 @@
 package ro.sevens.game.deck
 
-import ro.sevens.payload.base.GameTypeData
-import ro.sevens.payload.enums.SupportedGame
+import ro.sevens.payload.Card
 
 /**
  * server
@@ -22,7 +21,19 @@ import ro.sevens.payload.enums.SupportedGame
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface DeckProvider {
+class SevensNormalDeck : BaseDeck() {
 
-    fun createDeck(supportedGame: SupportedGame, type: GameTypeData): Deck
+    val _cards: List<Card> = mutableListOf<Card>().apply {
+        for (i in 7..14) {
+            addAll(i)
+        }
+    }
+
+    override val cards: List<Card>
+        get() = _cards
+
+    override fun toString(): String {
+        return cards.joinToString(",\n")
+    }
+
 }

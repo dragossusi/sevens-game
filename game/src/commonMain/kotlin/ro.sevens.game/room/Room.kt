@@ -1,12 +1,13 @@
 package ro.sevens.game.room
 
 import kotlinx.coroutines.CoroutineScope
-import ro.sevens.game.PlayerSession
 import ro.sevens.game.deck.Deck
 import ro.sevens.game.listener.*
 import ro.sevens.game.round.Round
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
+import ro.sevens.payload.enums.RoomStatus
 import ro.sevens.payload.game.SimplePlayerResponse
 
 /**
@@ -28,30 +29,31 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface Room : RoomListeners, CoroutineScope {
+interface Room<S : PlayerSession,
+        R : Round<S>> : RoomListeners<S>, CoroutineScope {
 
     val roundEndDelay: Long
     val id: Long
 
-    val players: List<PlayerSession>
+    val players: List<S>
     val isFull: Boolean
         get() = players.size >= maxPlayers
 
     val deck: Deck
     val remainingCards: List<Card>
 
-    val rounds: List<Round>
+    val rounds: List<R>
 
-    val currentRound: Round?
+    val currentRound: R?
 
     //todo
-    val startingPlayer: PlayerSession
+    val startingPlayer: S
         get() = players[0]
 
     val type: GameTypeData
 
-    var currentPlayer: PlayerSession?
-    val nextPlayer: PlayerSession?
+    var currentPlayer: S?
+    val nextPlayer: S?
         get() = currentPlayer?.let {
             players[(players.indexOf(it) + 1) % maxPlayers]
         }
@@ -63,9 +65,13 @@ interface Room : RoomListeners, CoroutineScope {
 
     suspend fun startRound()
 
-    suspend fun addCard(player: PlayerSession, card: Card): Boolean
+    suspend fun addCard(player: S, card: Card): Boolean
 
-    suspend fun endRound(player: PlayerSession): Boolean
+    suspend fun chooseCardType(player: S, type: Card.Type): Boolean
+
+    suspend fun endRound(player: S): Boolean
+
+    suspend fun newRound(player: S): Boolean
 
     suspend fun start()
 
@@ -74,7 +80,7 @@ interface Room : RoomListeners, CoroutineScope {
     suspend fun stop()
 
     suspend fun addPlayerSession(
-        playerSession: PlayerSession,
+        playerSession: S,
         onRoomChanged: OnRoomChanged
     ): Boolean
 
@@ -82,22 +88,15 @@ interface Room : RoomListeners, CoroutineScope {
         suspend fun onRoomStopped()
     }
 
+    var status: RoomStatus
 }
 
-val Room.playerCount: Int
+val Room<*,*>.playerCount: Int
     get() = players.size
 
-val Room.maxPlayers: Int
+val Room<*,*>.maxPlayers: Int
     get() = type.maxPlayers
 
 
-suspend fun Room.newRound(player: PlayerSession): Boolean {
-    val result = endRound(player)
-    if (!result) return result
-    if (canStartRound) startRound()
-    else endGame()
-    return result
-}
-
-val Room.simplePlayers: List<SimplePlayerResponse>
+val Room<*,*>.simplePlayers: List<SimplePlayerResponse>
     get() = players.map(PlayerSession::toSimplePlayer)

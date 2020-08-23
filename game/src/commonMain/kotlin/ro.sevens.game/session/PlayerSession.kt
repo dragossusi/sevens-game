@@ -1,10 +1,8 @@
-package ro.sevens.game
+package ro.sevens.game.session
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import ro.sevens.game.hand.Hand
 import ro.sevens.game.room.Room
 import ro.sevens.game.round.Round
 import ro.sevens.payload.Card
@@ -30,43 +28,23 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-@Serializable
-class PlayerSession constructor(
-    @SerialName("room")
-    val room: Room,
-    @SerialName("player")
+abstract class PlayerSession constructor(
+    val room: Room<*, *>,
     val player: Player
 ) {
 
-    private val mutex = Mutex()
+    val mutex = Mutex()
 
-    @Transient
     var hand: Hand? = null
+
+    abstract val wonCardsCount: Int?
+    abstract val wonPointsCount: Int?
 
     val cardsCount: Int
         get() = hand?.cardsCount ?: 0
 
-    val wonCardsCount: Int
-        get() = hand?.wonCardsCount ?: 0
-
-    val wonPointsCount: Int
-        get() = hand?.wonPointsCount ?: 0
-
     val id: Long
         get() = player.id
-
-    suspend fun chooseCard(round: Round, card: Card): Boolean {
-        val hand = hand ?: return false
-
-        mutex.withLock(hand) {
-            if (hand.chooseCard(card)) {
-                round.addCard(card, this)
-                hand.cards
-                return true
-            }
-        }
-        return false
-    }
 
     fun addCard(card: Card) {
         hand!!.addCard(card)
@@ -81,6 +59,10 @@ class PlayerSession constructor(
         wonPointsCount
     )
 
+    fun addWonCards(cards: List<Card>) {
+        hand!!.addWonCards(cards)
+    }
+
     override fun toString(): String {
         return "PlayerSession(\n" +
                 "room=$room, \n" +
@@ -89,4 +71,17 @@ class PlayerSession constructor(
                 ")"
     }
 
+}
+
+suspend fun <S : PlayerSession> S.chooseCard(round: Round<S>, card: Card): Boolean {
+    val hand = hand ?: return false
+
+    mutex.withLock(hand) {
+        if (hand.chooseCard(card)) {
+            round.addCard(card, this)
+            hand.cards
+            return true
+        }
+    }
+    return false
 }

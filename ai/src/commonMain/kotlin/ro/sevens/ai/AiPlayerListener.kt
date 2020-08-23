@@ -2,7 +2,7 @@ package ro.sevens.ai
 
 import kotlinx.coroutines.*
 import ro.sevens.game.room.Room
-import ro.sevens.game.room.newRound
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
@@ -29,9 +29,9 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class AiPlayerListener(
-    private val player: AiPlayer,
-    private val room: Room,
+class AiPlayerListener<S:PlayerSession>(
+    private val player: SevensAiPlayer<S>,
+    private val room: Room<S,*>,
     private val tagLogger: TagLogger?,
     private val operationDelay: Long,
     dispather: CoroutineDispatcher

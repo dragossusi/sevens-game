@@ -1,6 +1,7 @@
 package ro.sevens.game.deck
 
 import ro.sevens.payload.base.GameTypeData
+import ro.sevens.payload.enums.SupportedGame
 
 /**
  * server
@@ -23,9 +24,14 @@ import ro.sevens.payload.base.GameTypeData
  */
 object DeckProviderImpl : DeckProvider {
 
-    override fun createDeck(type: GameTypeData): Deck {
-        return if (type.maxPlayers == 3) ThreeDeck()
-        else NormalDeck()
+    override fun createDeck(supportedGame: SupportedGame, type: GameTypeData): Deck {
+        return when (supportedGame) {
+            SupportedGame.SEVENS -> {
+                if (type.maxPlayers == 3) SevensThreeDeck()
+                else SevensNormalDeck()
+            }
+            SupportedGame.MACAO -> FullDeck()
+        }
     }
 
 }

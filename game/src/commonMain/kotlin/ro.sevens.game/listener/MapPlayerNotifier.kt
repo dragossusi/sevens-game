@@ -1,10 +1,10 @@
 package ro.sevens.game.listener
 
-import ro.sevens.game.PlayerSession
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.simplePlayers
 import ro.sevens.game.round.Round
 import ro.sevens.game.round.toResponse
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
@@ -30,21 +30,21 @@ import ro.sevens.payload.game.PlayerTurnResponse
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class MapPlayerNotifier(
+class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
     private val tagLogger: TagLogger?
-) : PlayerNotifier {
+) : PlayerNotifier<S, RD> {
 
-    private val listeners = mutableMapOf<PlayerSession, Room.OnRoomChanged>()
+    private val listeners = mutableMapOf<S, Room.OnRoomChanged>()
 
-    override fun addListener(player: PlayerSession, onRoomChanged: Room.OnRoomChanged) {
+    override fun addListener(player: S, onRoomChanged: Room.OnRoomChanged) {
         listeners[player] = onRoomChanged
     }
 
-    override fun removeListener(player: PlayerSession) {
+    override fun removeListener(player: S) {
         listeners.remove(player)
     }
 
-    override suspend fun onRoomStopped(room: Room) {
+    override suspend fun onRoomStopped(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onRoomStopped ${room.id}")
             listeners.forEach {
@@ -53,7 +53,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onGameEnded(room: Room) {
+    override suspend fun onGameEnded(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onGameEnded ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -65,14 +65,16 @@ class MapPlayerNotifier(
                         winner = currentPlayer!!.id,
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount,
-                        rounds = rounds.map(Round::toResponse).toTypedArray()
+                        rounds = rounds.map {
+                            it.toResponse()
+                        }.toTypedArray()
                     )
                 )
             }
         }
     }
 
-    override suspend fun onGameStarted(room: Room) {
+    override suspend fun onGameStarted(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onGameStarted ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -82,7 +84,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onRoundStarted(room: Room) {
+    override suspend fun onRoundStarted(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onRoundStarted ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -103,7 +105,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onPlayerTurn(room: Room) {
+    override suspend fun onPlayerTurn(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onPlayerTurn ${id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -121,7 +123,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onRoundEnded(room: Room) {
+    override suspend fun onRoundEnded(room: Room<*, *>) {
         room.run {
             tagLogger?.d("onRoundEnded ${room.rounds.last()}")
             val simplePlayers = simplePlayers.toTypedArray()

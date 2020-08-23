@@ -1,11 +1,12 @@
 package ro.sevens.ai
 
-import ro.sevens.game.Hand
-import ro.sevens.game.PlayerSession
+import ro.sevens.game.hand.Hand
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
 import ro.sevens.payload.extensions.firstCut
 import ro.sevens.payload.extensions.pointsCount
+import ro.sevens.payload.isCut
 
 
 /**
@@ -27,8 +28,8 @@ import ro.sevens.payload.extensions.pointsCount
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class AiPlayer constructor(
-    val session: PlayerSession,
+class SevensAiPlayer<S:PlayerSession> constructor(
+    val session: S,
     val type: GameTypeData
 ) {
     val id: Long

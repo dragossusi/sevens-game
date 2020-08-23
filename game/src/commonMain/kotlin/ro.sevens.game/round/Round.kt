@@ -1,6 +1,6 @@
 package ro.sevens.game.round
 
-import ro.sevens.game.PlayerSession
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.game.CardsContainer
 import ro.sevens.payload.game.RoundResponse
@@ -24,15 +24,18 @@ import ro.sevens.payload.game.RoundResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface Round : CardsContainer {
-    val startingPlayer: PlayerSession
-    var owner: PlayerSession
-    fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean
-    fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean
-    suspend fun addCard(card: Card, from: PlayerSession)
-    suspend fun canAddCard(card: Card, from: PlayerSession): Boolean
-    suspend fun end(playerSession: PlayerSession): Boolean
+interface Round<S : PlayerSession> : CardsContainer {
+    val startingPlayer: S
+    var owner: S
+
+    fun canCut(playerSession: S, playerCount: Int): Boolean
+    fun canContinue(playerSession: S, playerCount: Int): Boolean
+
+    suspend fun addCard(card: Card, from: S)
+    suspend fun canAddCard(card: Card, from: S): Boolean
+    suspend fun end(playerSession: S): Boolean
+
     fun start(): Boolean
 }
 
-fun Round.toResponse() = RoundResponse(startingPlayer.id, owner.id, cards)
+fun Round<*>.toResponse() = RoundResponse(startingPlayer.id, owner.id, cards)

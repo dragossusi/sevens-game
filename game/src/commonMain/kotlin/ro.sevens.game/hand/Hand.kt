@@ -1,5 +1,6 @@
-package ro.sevens.game
+package ro.sevens.game.hand
 
+import ro.sevens.game.ListContainer
 import ro.sevens.payload.Card
 
 /**
@@ -21,27 +22,23 @@ import ro.sevens.payload.Card
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class Hand private constructor(cards: MutableList<Card>) : ListContainer<Card> {
+abstract class Hand private constructor(cards: MutableList<Card>) : ListContainer<Card> {
 
     constructor() : this(mutableListOf())
 
-    private val _cards: MutableList<Card> = cards
+    protected val _cards: MutableList<Card> = cards
     inline val cards: List<Card>
         get() = items
 
     override val items: List<Card>
         get() = _cards
 
-    private val wonCards: MutableList<Card> = ArrayList()
-
-    var wonPointsCount: Int = 0
-        private set
-
     val cardsCount: Int
         get() = cards.size
 
-    val wonCardsCount: Int
-        get() = wonCards.size
+    abstract val wonCardsCount: Int?
+
+    abstract val wonPointsCount: Int?
 
     fun hasCard(card: Card): Boolean {
         return cards.any {
@@ -56,13 +53,6 @@ class Hand private constructor(cards: MutableList<Card>) : ListContainer<Card> {
         return true
     }
 
-    fun addWonCards(cards: Collection<Card>) {
-        wonCards += cards
-        wonPointsCount += cards.count {
-            it.isPoint
-        }
-    }
-
     fun chooseRandomCard(): Card {
         return cards.random()
     }
@@ -74,9 +64,9 @@ class Hand private constructor(cards: MutableList<Card>) : ListContainer<Card> {
     override fun toString(): String {
         return "Hand(\n" +
                 "_cards=$_cards, \n" +
-                "wonCards=$wonCards, \n" +
-                "wonPointsCount=$wonPointsCount\n" +
                 ")"
     }
+
+    abstract fun addWonCards(cards: Collection<Card>)
 
 }

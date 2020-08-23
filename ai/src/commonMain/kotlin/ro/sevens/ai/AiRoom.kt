@@ -1,12 +1,9 @@
 package ro.sevens.ai
 
 import kotlinx.coroutines.CoroutineDispatcher
-import ro.sevens.game.PlayerSession
-import ro.sevens.game.deck.DeckProvider
-import ro.sevens.game.listener.MapPlayerNotifier
-import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.room.NormalRoom
 import ro.sevens.game.room.Room
+import ro.sevens.game.round.Round
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Player
 import ro.sevens.payload.base.GameTypeData
@@ -31,36 +28,23 @@ import ro.sevens.payload.base.GameTypeData
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class AiRoom constructor(
-    id: Long,
-    type: GameTypeData,
-    deckProvider: DeckProvider,
+abstract class AiRoom<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constructor(
     private val tagLogger: TagLogger?,
     private val dispatcher: CoroutineDispatcher,
     private val operationDelay: Long,
-    playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger)
+    internal val room: RM
 ) {
 
     val type: GameTypeData
         get() = room.type
 
-    internal val room: Room = NormalRoom(
-        id = id,
-        type = type,
-        deckProvider = deckProvider,
-        tagLogger = tagLogger,
-        playerNotifier = playerNotifier,
-        coroutineContext = dispatcher,
-        roundEndDelay = 1250L
-    )
-
     suspend fun addAi(name: String, tagLogger: TagLogger? = null) {
-        val playerSession = PlayerSession(
+        val playerSession = createSession(
             room,
             Player(-room.players.size.toLong() - 1L, name, null)
         )
-        val listener = AiPlayerListener(
-            player = AiPlayer(playerSession, room.type),
+        val listener = AiPlayerListener<S>(
+            player = createPlayerListener(playerSession),
             room = room,
             tagLogger = tagLogger, //todo change me
             dispather = dispatcher,
@@ -69,7 +53,10 @@ class AiRoom constructor(
         room.addPlayerSession(playerSession, listener)
     }
 
-    suspend fun addPlayer(session: PlayerSession, listener: Room.OnRoomChanged) {
+    abstract fun createSession(room: RM, player: Player): S
+    abstract fun createPlayerListener(session: S): SevensAiPlayer<S>
+
+    suspend fun addPlayer(session: S, listener: Room.OnRoomChanged) {
         room.addPlayerSession(
             playerSession = session,
             onRoomChanged = listener
