@@ -2,6 +2,9 @@ package ro.sevens.ai
 
 import kotlinx.coroutines.*
 import ro.sevens.game.room.Room
+import ro.sevens.game.room.RoundedRoom
+import ro.sevens.game.round.Round
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
@@ -28,36 +31,13 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-open class AiPlayerListener(
+class RoundedAiPlayerListener<R:Round>(
     private val player: SevensAiPlayer,
-    private val room: Room,
+    private val room: RoundedRoom<R>,
     private val tagLogger: TagLogger?,
     private val operationDelay: Long,
     dispather: CoroutineDispatcher
-) : Room.OnRoomChanged, CoroutineScope {
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext = dispather + job
-
-    override suspend fun onRoomStopped() {
-        tagLogger?.w("TODO Not yet implemented")
-    }
-
-    override fun onGameEnded(response: GameEndResponse) {
-    }
-
-    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
-    }
-
-    override fun onRoundStarted(response: NewRoundResponse) {
-        launch {
-            delay(operationDelay)
-            if (response.currentPlayerId == player.id) {
-                room.addCard(player.session, player.pickCard())
-            }
-        }
-    }
+) : AiPlayerListener(player, room, tagLogger, operationDelay, dispather) {
 
     override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
         launch {
@@ -65,7 +45,8 @@ open class AiPlayerListener(
             if (playerTurn.currentPlayerId == player.id) {
                 val canEnd = playerTurn.canEnd(room.type)
                 val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
-                room.addCard(
+                if (card == null && canEnd) room.newRound(player.session)
+                else room.addCard(
                     player.session,
                     card ?: player.hand!!.chooseRandomCard()
                 )
@@ -73,11 +54,4 @@ open class AiPlayerListener(
         }
     }
 
-    override fun onRoomConnected(id: Long) {
-//        tagLogger?.w("TODO onRoomConnected")
-    }
-
-    override fun onRoundEnded(response: NewRoundResponse) {
-//        tagLogger?.w("TODO onRoundEnded")
-    }
 }

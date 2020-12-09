@@ -28,17 +28,19 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class PlayerSession constructor(
-    val room: Room<*, *>,
-    val player: Player
+class PlayerSession constructor(
+    val room: Room,
+    val player: Player,
+    var hand: Hand? = null
 ) {
 
     val mutex = Mutex()
 
-    var hand: Hand? = null
+    val wonCardsCount: Int?
+        get() = hand?.wonCardsCount
 
-    abstract val wonCardsCount: Int?
-    abstract val wonPointsCount: Int?
+    val wonPointsCount: Int?
+        get() = hand?.wonPointsCount
 
     val cardsCount: Int
         get() = hand?.cardsCount ?: 0
@@ -63,6 +65,10 @@ abstract class PlayerSession constructor(
         hand!!.addWonCards(cards)
     }
 
+    //player fields
+    val name: String
+        get() = player.name
+
     override fun toString(): String {
         return "PlayerSession(\n" +
                 "room=$room, \n" +
@@ -73,7 +79,7 @@ abstract class PlayerSession constructor(
 
 }
 
-suspend fun <S : PlayerSession> S.chooseCard(round: Round<S>, card: Card): Boolean {
+suspend fun <S : PlayerSession> S.chooseCard(round: Round, card: Card): Boolean {
     val hand = hand ?: return false
 
     mutex.withLock(hand) {

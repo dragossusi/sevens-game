@@ -22,15 +22,13 @@ import ro.sevens.payload.base.GameTypeData
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface SevensCommunication : ServerActions {
+interface Communication : ServerActions {
 
     var onRoomStarted: OnRoomStarted?
     var onRoomStopped: OnRoomStopped?
     var onPlayerTurn: OnPlayerTurn?
-    var onRoundEnded: OnRoundEnded?
 
     var onRoomConnected: OnRoomConnected?
-    var onRoundStarted: OnRoundStarted?
     var onGameEnded: OnGameEnded?
     var onGameStarted: OnGameStarted?
 }

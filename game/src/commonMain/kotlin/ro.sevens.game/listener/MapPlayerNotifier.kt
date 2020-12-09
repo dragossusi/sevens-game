@@ -30,21 +30,11 @@ import ro.sevens.payload.game.PlayerTurnResponse
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
+class MapPlayerNotifier(
     private val tagLogger: TagLogger?
-) : PlayerNotifier<S, RD> {
+) : MapNotifier(), PlayerNotifier {
 
-    private val listeners = mutableMapOf<S, Room.OnRoomChanged>()
-
-    override fun addListener(player: S, onRoomChanged: Room.OnRoomChanged) {
-        listeners[player] = onRoomChanged
-    }
-
-    override fun removeListener(player: S) {
-        listeners.remove(player)
-    }
-
-    override suspend fun onRoomStopped(room: Room<*, *>) {
+    override suspend fun onRoomStopped(room: Room) {
         room.run {
             tagLogger?.d("onRoomStopped ${room.id}")
             listeners.forEach {
@@ -53,7 +43,7 @@ class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
         }
     }
 
-    override suspend fun onGameEnded(room: Room<*, *>) {
+    override suspend fun onGameEnded(room: Room) {
         room.run {
             tagLogger?.d("onGameEnded ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -65,16 +55,16 @@ class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
                         winner = currentPlayer!!.id,
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount,
-                        rounds = rounds.map {
-                            it.toResponse()
-                        }.toTypedArray()
+//                        rounds = rounds.map {
+//                            it.toResponse()
+//                        }.toTypedArray()
                     )
                 )
             }
         }
     }
 
-    override suspend fun onGameStarted(room: Room<*, *>) {
+    override suspend fun onGameStarted(room: Room) {
         room.run {
             tagLogger?.d("onGameStarted ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -84,28 +74,7 @@ class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
         }
     }
 
-    override suspend fun onRoundStarted(room: Room<*, *>) {
-        room.run {
-            tagLogger?.d("onRoundStarted ${room.id}")
-            val simplePlayers = simplePlayers.toTypedArray()
-            listeners.forEach {
-                val hand = it.key.hand!!
-                it.value.onRoundStarted(
-                    NewRoundResponse(
-                        hand.cards.toTypedArray(),
-                        simplePlayers,
-                        startingPlayer.id,
-                        currentPlayer!!.id,
-                        currentRound!!.cards.toTypedArray(),
-                        wonPoints = hand.wonPointsCount,
-                        wonCards = hand.wonCardsCount
-                    )
-                )
-            }
-        }
-    }
-
-    override suspend fun onPlayerTurn(room: Room<*, *>) {
+    override suspend fun onPlayerTurn(room: Room) {
         room.run {
             tagLogger?.d("onPlayerTurn ${id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -116,31 +85,11 @@ class MapPlayerNotifier<S : PlayerSession, RD : Round<S>>(
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards.toTypedArray()
+                        currentCards!!.toTypedArray()
                     )
                 )
             }
         }
     }
 
-    override suspend fun onRoundEnded(room: Room<*, *>) {
-        room.run {
-            tagLogger?.d("onRoundEnded ${room.rounds.last()}")
-            val simplePlayers = simplePlayers.toTypedArray()
-            listeners.forEach { (key, value) ->
-                val hand = key.hand!!
-                value.onRoundEnded(
-                    NewRoundResponse(
-                        hand.cards.toTypedArray(),
-                        simplePlayers,
-                        startingPlayer.id,
-                        currentPlayer!!.id,
-                        currentRound!!.cards.toTypedArray(),
-                        wonPoints = hand.wonPointsCount,
-                        wonCards = hand.wonCardsCount
-                    )
-                )
-            }
-        }
-    }
 }

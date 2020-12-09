@@ -2,7 +2,7 @@ package ro.sevens.game.round
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ro.sevens.game.session.SevensPlayerSession
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.canCut
 
@@ -26,10 +26,10 @@ import ro.sevens.payload.canCut
  *
  */
 class SevensRound constructor(
-    override val startingPlayer: SevensPlayerSession,
+    override val startingPlayer: PlayerSession,
     val numOfPlayers: Int
-) : Round<SevensPlayerSession> {
-    override var owner: SevensPlayerSession = startingPlayer
+) : Round {
+    override var owner: PlayerSession = startingPlayer
     private val _cards = mutableListOf<Card>()
     private val mutex = Mutex()
     private var status: Status = Status.NONE
@@ -37,12 +37,12 @@ class SevensRound constructor(
     override val cards: List<Card>
         get() = _cards
 
-    override suspend fun canAddCard(card: Card, from: SevensPlayerSession): Boolean {
+    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
         return if (_cards.size < numOfPlayers) true
         else card.canCut(cards.first(), numOfPlayers)
     }
 
-    override suspend fun addCard(card: Card, from: SevensPlayerSession) {
+    override suspend fun addCard(card: Card, from: PlayerSession) {
         mutex.withLock(this) {
             val firstCard = cards.firstOrNull()
             firstCard?.let {
@@ -54,7 +54,7 @@ class SevensRound constructor(
         }
     }
 
-    override fun canCut(playerSession: SevensPlayerSession, playerCount: Int): Boolean {
+    override fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean {
         val firstCard = cards.first()
         playerSession.hand!!.cards.forEach {
             if (it.canCut(firstCard, playerCount))
@@ -63,7 +63,7 @@ class SevensRound constructor(
         return false
     }
 
-    override fun canContinue(playerSession: SevensPlayerSession, playerCount: Int): Boolean {
+    override fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean {
         return playerSession.id != owner.id && canCut(playerSession, playerCount)
     }
 
@@ -73,7 +73,7 @@ class SevensRound constructor(
         return true
     }
 
-    override suspend fun end(playerSession: SevensPlayerSession): Boolean {
+    override suspend fun end(playerSession: PlayerSession): Boolean {
         if (playerSession.id != startingPlayer.id) return false
         if (status != Status.STARTED) return false
         owner.addWonCards(cards)

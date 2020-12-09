@@ -3,7 +3,7 @@ package ro.sevens.ai
 import kotlinx.coroutines.CoroutineDispatcher
 import ro.sevens.game.room.SevensRoom
 import ro.sevens.game.round.SevensRound
-import ro.sevens.game.session.SevensPlayerSession
+import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Player
 import ro.sevens.payload.enums.GameTypeEnum
@@ -32,13 +32,13 @@ class SevensAiRoom(
     dispatcher: CoroutineDispatcher,
     operationDelay: Long,
     room: SevensRoom
-) : AiRoom<SevensPlayerSession, SevensRound, SevensRoom>(tagLogger, dispatcher, operationDelay, room) {
+) : AiRoom<SevensRound, SevensRoom>(tagLogger, dispatcher, operationDelay, room) {
 
-    override fun createSession(room: SevensRoom, player: Player): SevensPlayerSession {
-        return SevensPlayerSession(room, player)
+    override fun createSession(room: SevensRoom, player: Player): PlayerSession {
+        return PlayerSession(room, player)
     }
 
-    override fun createPlayerListener(session: SevensPlayerSession): SevensAiPlayer<SevensPlayerSession> {
+    override fun createPlayerListener(session: PlayerSession): SevensAiPlayer {
         return SevensAiPlayer(session, GameTypeEnum.NORMAL)
     }
 }

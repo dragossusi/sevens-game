@@ -30,10 +30,10 @@ import ro.sevens.payload.enums.RoomStatus
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
-    protected val playerNotifier: PlayerNotifier<S, R>,
+abstract class BaseRoom(
+    protected val playerNotifier: PlayerNotifier,
     protected val tagLogger: TagLogger?
-) : Room<S, R> {
+) : Room {
 
     override var status = RoomStatus.WAITING
         set(value) {
@@ -45,19 +45,15 @@ abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
         get() = players.size < type.maxPlayers && status == RoomStatus.WAITING
 
 
-    protected val _players = mutableListOf<S>()
-    override val players: List<S>
+    protected val _players = mutableListOf<PlayerSession>()
+    override val players: List<PlayerSession>
         get() = _players
 
     private val _remainingCards = mutableListOf<Card>()
     override val remainingCards: List<Card>
         get() = _remainingCards
 
-    override val rounds = mutableListOf<R>()
-
-    override var currentPlayer: S? = null
-
-    override var currentRound: R? = null
+    override var currentPlayer: PlayerSession? = null
 
     protected fun initCards() {
         _remainingCards.clear()
@@ -65,18 +61,6 @@ abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
     }
 
     abstract fun createHand(): Hand
-
-    override suspend fun endRound(player: S): Boolean = withContext(coroutineContext) {
-        currentRound?.let {
-            if (it.end(player)) {
-                currentPlayer = it.owner
-                playerNotifier.onRoundEnded(this@BaseRoom)
-                delay(roundEndDelay)
-                return@withContext true
-            }
-        } ?: throw IllegalStateException("No round started")
-        return@withContext false
-    }
 
     protected fun initHands() {
         players.forEach {
@@ -89,11 +73,11 @@ abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
         return _remainingCards.removeLast()
     }
 
-    override fun addListener(player: S, onRoomChanged: Room.OnRoomChanged) {
+    override fun addListener(player: PlayerSession, onRoomChanged: Room.OnRoomChanged) {
         playerNotifier.addListener(player, onRoomChanged)
     }
 
-    override fun removeListener(player: S) {
+    override fun removeListener(player: PlayerSession) {
         playerNotifier.removeListener(player)
     }
 
@@ -102,15 +86,14 @@ abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
             RoomStatus.WAITING, RoomStatus.ENDED -> {
                 playerNotifier.onGameStarted(this@BaseRoom)
                 status = RoomStatus.IN_PROGRESS
-                currentPlayer = startingPlayer
-                initCards()
-                initHands()
-                startRound()
+                startGame()
             }
             RoomStatus.STOPPED -> throw IllegalStateException("Room already stopped")
             RoomStatus.IN_PROGRESS -> throw IllegalStateException("Room already started")
         }
     }
+
+    protected abstract suspend fun startGame()
 
     override suspend fun endGame() = withContext(coroutineContext) {
         when (status) {
@@ -132,18 +115,9 @@ abstract class BaseRoom<S : PlayerSession, R : Round<S>>(
         }
     }
 
-    protected suspend fun setPlayerTurn(player: S) {
+    protected suspend fun setPlayerTurn(player: PlayerSession) {
         currentPlayer = player
         playerNotifier.onPlayerTurn(this)
-    }
-
-    protected suspend fun chooseCard(player: S, card: Card): Boolean {
-        val currentPlayer = currentPlayer ?: return false
-        if (currentPlayer.id == player.id) {
-            val currentRound = currentRound ?: return false
-            return player.chooseCard(currentRound, card)
-        }
-        return false
     }
 
 }

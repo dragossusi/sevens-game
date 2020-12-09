@@ -23,9 +23,9 @@ import ro.sevens.game.session.PlayerSession
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface RoomListeners<S : PlayerSession> {
+interface RoomListeners {
 
-    fun addListener(player: S, onRoomChanged: Room.OnRoomChanged)
-    fun removeListener(player: S)
+    fun addListener(player: PlayerSession, onRoomChanged: Room.OnRoomChanged)
+    fun removeListener(player: PlayerSession)
 
 }

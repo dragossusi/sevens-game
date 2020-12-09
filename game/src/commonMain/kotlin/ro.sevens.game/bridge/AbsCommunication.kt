@@ -21,14 +21,12 @@ import ro.sevens.game.listener.*
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class AbsSevensCommunication : SevensCommunication {
+abstract class AbsCommunication : Communication {
     override var onRoomStarted: OnRoomStarted? = null
     override var onRoomStopped: OnRoomStopped? = null
     override var onPlayerTurn: OnPlayerTurn? = null
-    override var onRoundEnded: OnRoundEnded? = null
 
     override var onRoomConnected: OnRoomConnected? = null
-    override var onRoundStarted: OnRoundStarted? = null
     override var onGameEnded: OnGameEnded? = null
     override var onGameStarted: OnGameStarted? = null
 }

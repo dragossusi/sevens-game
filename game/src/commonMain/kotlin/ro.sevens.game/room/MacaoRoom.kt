@@ -7,8 +7,6 @@ import ro.sevens.game.hand.Hand
 import ro.sevens.game.hand.SevensHand
 import ro.sevens.game.listener.MapPlayerNotifier
 import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.round.MacaoRound
-import ro.sevens.game.session.MacaoPlayerSession
 import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
@@ -40,59 +38,43 @@ class MacaoRoom constructor(
     override val type: GameTypeData,
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
-    playerNotifier: PlayerNotifier<MacaoPlayerSession, MacaoRound> = MapPlayerNotifier(tagLogger),
+    playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
     override val coroutineContext: CoroutineContext,
     override val roundEndDelay: Long = 1250L
-) : BaseRoom<MacaoPlayerSession, MacaoRound>(playerNotifier, tagLogger) {
+) : BaseRoom(playerNotifier, tagLogger) {
 
     override val deck: Deck = deckProvider.createDeck(SupportedGame.SEVENS, type)
+
+    override var currentCards: MutableList<Card>? = null
+
+    override suspend fun startGame() {
+        TODO("Not yet implemented")
+    }
 
     override val canStartRound: Boolean
         get() = players.all {
             it.cardsCount != 0
         }
 
-    override suspend fun startRound() = withContext(coroutineContext) {
-        val player = currentPlayer!!
-        val round = MacaoRound(player, players.count())
-        rounds += round
-        currentRound = round
-        drawCards(player)
-        round.start()
-        playerNotifier.onRoundStarted(this@MacaoRoom)
+    override suspend fun addCard(player: PlayerSession, card: Card): Boolean = withContext(coroutineContext) {
+        val currentCard = currentCards?.last() ?: return@withContext false
+        if (currentCard.number == 11) {
+            TODO("change color")
+        }
+        if (currentCard.number == card.number || currentCard.type == card.type) {
+            currentCards!! += card
+            return@withContext true
+        }
+        return@withContext false
     }
 
-    override suspend fun newRound(player: MacaoPlayerSession): Boolean {
-        val result = endRound(player)
-        if (!result) return result
-        if (canStartRound) startRound()
-        else endGame()
-        return result
-    }
-
-    override suspend fun addCard(player: MacaoPlayerSession, card: Card): Boolean = withContext(coroutineContext) {
-        val result = chooseCard(player, card)
-        if (!result) return@withContext result
-        val nextPlayer = nextPlayer!!
-        val roundStartingPlayer = currentRound!!.startingPlayer
-        if (nextPlayer.id == roundStartingPlayer.id) {
-            if (currentRound!!.canContinue(nextPlayer, playerCount)) {
-                setPlayerTurn(nextPlayer)
-            } else {
-                val res = newRound(roundStartingPlayer)
-                if (!res) throw Exception("failed to start new round")
-            }
-        } else setPlayerTurn(nextPlayer)
-        return@withContext result
-    }
-
-    override suspend fun chooseCardType(player: MacaoPlayerSession, type: Card.Type): Boolean {
+    override suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean {
         tagLogger?.w("${player.player.name} tried to choose a card which is not possible in this mode")
         return false
     }
 
     override suspend fun addPlayerSession(
-        playerSession: MacaoPlayerSession,
+        playerSession: PlayerSession,
         onRoomChanged: Room.OnRoomChanged
     ): Boolean = withContext(coroutineContext) {
         if (!canJoin || isFull) return@withContext false

@@ -28,8 +28,8 @@ import ro.sevens.payload.isCut
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class SevensAiPlayer<S:PlayerSession> constructor(
-    val session: S,
+class SevensAiPlayer constructor(
+    val session: PlayerSession,
     val type: GameTypeData
 ) {
     val id: Long

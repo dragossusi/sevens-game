@@ -29,31 +29,28 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface Room<S : PlayerSession,
-        R : Round<S>> : RoomListeners<S>, CoroutineScope {
+interface Room : RoomListeners, CoroutineScope {
 
     val roundEndDelay: Long
     val id: Long
 
-    val players: List<S>
+    val players: List<PlayerSession>
     val isFull: Boolean
         get() = players.size >= maxPlayers
 
     val deck: Deck
+
+    val currentCards: List<Card>?
     val remainingCards: List<Card>
 
-    val rounds: List<R>
-
-    val currentRound: R?
-
     //todo
-    val startingPlayer: S
+    val startingPlayer: PlayerSession
         get() = players[0]
 
     val type: GameTypeData
 
-    var currentPlayer: S?
-    val nextPlayer: S?
+    var currentPlayer: PlayerSession?
+    val nextPlayer: PlayerSession?
         get() = currentPlayer?.let {
             players[(players.indexOf(it) + 1) % maxPlayers]
         }
@@ -63,15 +60,9 @@ interface Room<S : PlayerSession,
 
     //funs
 
-    suspend fun startRound()
+    suspend fun addCard(player: PlayerSession, card: Card): Boolean
 
-    suspend fun addCard(player: S, card: Card): Boolean
-
-    suspend fun chooseCardType(player: S, type: Card.Type): Boolean
-
-    suspend fun endRound(player: S): Boolean
-
-    suspend fun newRound(player: S): Boolean
+    suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean
 
     suspend fun start()
 
@@ -80,23 +71,23 @@ interface Room<S : PlayerSession,
     suspend fun stop()
 
     suspend fun addPlayerSession(
-        playerSession: S,
+        playerSession: PlayerSession,
         onRoomChanged: OnRoomChanged
     ): Boolean
 
-    interface OnRoomChanged : OnRoundStarted, OnPlayerTurn, OnRoomConnected, OnRoundEnded, OnGameStarted, OnGameEnded {
+    interface OnRoomChanged : OnPlayerTurn, OnRoomConnected, OnGameStarted, OnGameEnded {
         suspend fun onRoomStopped()
     }
 
     var status: RoomStatus
 }
 
-val Room<*,*>.playerCount: Int
+val Room.playerCount: Int
     get() = players.size
 
-val Room<*,*>.maxPlayers: Int
+val Room.maxPlayers: Int
     get() = type.maxPlayers
 
 
-val Room<*,*>.simplePlayers: List<SimplePlayerResponse>
+val Room.simplePlayers: List<SimplePlayerResponse>
     get() = players.map(PlayerSession::toSimplePlayer)

@@ -42,12 +42,14 @@ abstract class Hand private constructor(cards: MutableList<Card>) : ListContaine
 
     fun hasCard(card: Card): Boolean {
         return cards.any {
-            it.theSame(card)
+            it == card
         }
     }
 
     fun chooseCard(card: Card): Boolean {
-        val index = _cards.indexOfFirst { it.theSame(card) }
+        val index = _cards.indexOfFirst {
+            it == card
+        }
         if (index == -1) return false
         else _cards.removeAt(index)
         return true

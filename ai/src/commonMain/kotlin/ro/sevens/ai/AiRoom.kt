@@ -28,7 +28,7 @@ import ro.sevens.payload.base.GameTypeData
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class AiRoom<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constructor(
+abstract class AiRoom<R : Round, RM : Room> constructor(
     private val tagLogger: TagLogger?,
     private val dispatcher: CoroutineDispatcher,
     private val operationDelay: Long,
@@ -43,7 +43,7 @@ abstract class AiRoom<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constr
             room,
             Player(-room.players.size.toLong() - 1L, name, null)
         )
-        val listener = AiPlayerListener<S>(
+        val listener = AiPlayerListener(
             player = createPlayerListener(playerSession),
             room = room,
             tagLogger = tagLogger, //todo change me
@@ -53,10 +53,10 @@ abstract class AiRoom<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constr
         room.addPlayerSession(playerSession, listener)
     }
 
-    abstract fun createSession(room: RM, player: Player): S
-    abstract fun createPlayerListener(session: S): SevensAiPlayer<S>
+    abstract fun createSession(room: RM, player: Player): PlayerSession
+    abstract fun createPlayerListener(session: PlayerSession): SevensAiPlayer
 
-    suspend fun addPlayer(session: S, listener: Room.OnRoomChanged) {
+    suspend fun addPlayer(session: PlayerSession, listener: Room.OnRoomChanged) {
         room.addPlayerSession(
             playerSession = session,
             onRoomChanged = listener

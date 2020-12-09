@@ -24,11 +24,9 @@ import ro.sevens.game.session.PlayerSession
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface PlayerNotifier<S : PlayerSession, RD : Round<S>> : RoomListeners<S> {
-    suspend fun onRoomStopped(room: Room<*, *>)
-    suspend fun onRoundStarted(room: Room<*, *>)
-    suspend fun onPlayerTurn(room: Room<*, *>)
-    suspend fun onRoundEnded(room: Room<*, *>)
-    suspend fun onGameEnded(room: Room<*, *>)
-    suspend fun onGameStarted(room: Room<*, *>)
+interface PlayerNotifier : RoomListeners {
+    suspend fun onRoomStopped(room: Room)
+    suspend fun onPlayerTurn(room: Room)
+    suspend fun onGameEnded(room: Room)
+    suspend fun onGameStarted(room: Room)
 }

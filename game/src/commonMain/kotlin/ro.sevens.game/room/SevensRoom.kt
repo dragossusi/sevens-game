@@ -6,10 +6,11 @@ import ro.sevens.game.deck.DeckProvider
 import ro.sevens.game.hand.Hand
 import ro.sevens.game.hand.SevensHand
 import ro.sevens.game.listener.MapPlayerNotifier
+import ro.sevens.game.listener.MapRoundsNotifier
 import ro.sevens.game.listener.PlayerNotifier
+import ro.sevens.game.listener.RoundsNotifier
 import ro.sevens.game.round.SevensRound
 import ro.sevens.game.session.PlayerSession
-import ro.sevens.game.session.SevensPlayerSession
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
@@ -40,10 +41,18 @@ class SevensRoom constructor(
     override val type: GameTypeData,
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
-    playerNotifier: PlayerNotifier<SevensPlayerSession, SevensRound> = MapPlayerNotifier(tagLogger),
+    playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
+    roundsNotifier: RoundsNotifier<SevensRound> = MapRoundsNotifier(tagLogger),
     override val coroutineContext: CoroutineContext,
     override val roundEndDelay: Long = 1250L
-) : BaseRoom<SevensPlayerSession, SevensRound>(playerNotifier, tagLogger) {
+) : BaseRoundedRoom<SevensRound>(roundsNotifier, playerNotifier, tagLogger) {
+
+    override suspend fun startGame() {
+        currentPlayer = startingPlayer
+        initCards()
+        initHands()
+        startRound()
+    }
 
     override val deck: Deck = deckProvider.createDeck(SupportedGame.SEVENS, type)
 
@@ -52,6 +61,9 @@ class SevensRoom constructor(
             it.cardsCount != 0
         }
 
+    override val currentCards: List<Card>?
+        get() = currentRound?.cards
+
     override suspend fun startRound() = withContext(coroutineContext) {
         val player = currentPlayer!!
         val round = SevensRound(player, players.count())
@@ -59,10 +71,10 @@ class SevensRoom constructor(
         currentRound = round
         drawCards(player)
         round.start()
-        playerNotifier.onRoundStarted(this@SevensRoom)
+        roundsNotifier.onRoundStarted(this@SevensRoom)
     }
 
-    override suspend fun newRound(player: SevensPlayerSession): Boolean {
+    override suspend fun newRound(player: PlayerSession): Boolean {
         val result = endRound(player)
         if (!result) return result
         if (canStartRound) startRound()
@@ -70,7 +82,7 @@ class SevensRoom constructor(
         return result
     }
 
-    override suspend fun addCard(player: SevensPlayerSession, card: Card): Boolean = withContext(coroutineContext) {
+    override suspend fun addCard(player: PlayerSession, card: Card): Boolean = withContext(coroutineContext) {
         val result = chooseCard(player, card)
         if (!result) return@withContext result
         val nextPlayer = nextPlayer!!
@@ -86,15 +98,12 @@ class SevensRoom constructor(
         return@withContext result
     }
 
-    override suspend fun chooseCardType(player: SevensPlayerSession, type: Card.Type): Boolean {
+    override suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean {
         tagLogger?.w("${player.player.name} tried to choose a card which is not possible in this mode")
         return false
     }
 
-    override suspend fun addPlayerSession(
-        playerSession: SevensPlayerSession,
-        onRoomChanged: Room.OnRoomChanged
-    ): Boolean = withContext(coroutineContext) {
+    override suspend fun addPlayerSession(playerSession: PlayerSession, onRoomChanged: Room.OnRoomChanged): Boolean = withContext(coroutineContext) {
         if (!canJoin || isFull) return@withContext false
         _players.add(playerSession)
         addListener(playerSession, onRoomChanged)

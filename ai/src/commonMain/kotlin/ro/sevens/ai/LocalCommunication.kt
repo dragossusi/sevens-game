@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ro.sevens.game.bridge.AbsSevensCommunication
+import ro.sevens.game.bridge.AbsCommunication
 import ro.sevens.game.room.Room
 import ro.sevens.game.round.Round
 import ro.sevens.game.session.PlayerSession
@@ -32,28 +32,22 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class LocalSevensCommunication<S : PlayerSession, RD : Round<S>, RM : Room<S, RD>> constructor(
-    private val aiRoom: AiRoom<S, RD, RM>,
+open class LocalCommunication<R : Round, RM : Room> constructor(
+    protected val aiRoom: AiRoom<R, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
     tagLogger: TagLogger,
-    playerInit: (Room<S, RD>, Player) -> S
-) : AbsSevensCommunication(), CoroutineScope {
+    playerInit: (Room, Player) -> PlayerSession
+) : AbsCommunication(), CoroutineScope {
 
-    private val playerSession = playerInit(aiRoom.room, player)
-    private val localOnRoomChanged = LocalOnRoomChanged(this, tagLogger)
+    protected val playerSession = playerInit(aiRoom.room, player)
+    protected open val localOnRoomChanged = LocalOnRoomChanged(this, tagLogger)
 
     override val coroutineContext: CoroutineContext = dispatcher + Job()
 
     override fun placeCard(card: Card) {
         launch {
             aiRoom.room.addCard(playerSession, card)
-        }
-    }
-
-    override fun endRound() {
-        launch {
-            aiRoom.room.newRound(playerSession)
         }
     }
 
@@ -70,4 +64,9 @@ class LocalSevensCommunication<S : PlayerSession, RD : Round<S>, RM : Room<S, RD
             aiRoom.room.stop()
         }
     }
+
+    override fun drawCard() {
+        TODO("Not yet implemented")
+    }
+
 }

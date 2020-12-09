@@ -1,6 +1,9 @@
-package ro.sevens.game.deck
+package ro.sevens.ai
 
-import ro.sevens.payload.Card
+import ro.sevens.game.bridge.RoundedCommunication
+import ro.sevens.game.room.Room
+import ro.sevens.logger.TagLogger
+import ro.sevens.payload.game.NewRoundResponse
 
 
 /**
@@ -22,14 +25,17 @@ import ro.sevens.payload.Card
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class BaseDeck : Deck {
+class LocalOnRoundedRoomChanged(
+    override val sevensCommunication: RoundedCommunication,
+    private val tagLogger: TagLogger?
+) : LocalOnRoomChanged(sevensCommunication, tagLogger), Room.OnRoundedRoomChanged {
 
-    override fun toString(): String {
-        return cards.joinToString(",\n")
+    override fun onRoundEnded(response: NewRoundResponse) {
+        sevensCommunication.onRoundEnded?.onRoundEnded(response)
     }
 
-    override fun shuffle(): List<Card> {
-        return cards.shuffled()
+    override fun onRoundStarted(response: NewRoundResponse) {
+        tagLogger?.i("onRoundStarted: $response")
+        sevensCommunication.onRoundStarted?.onRoundStarted(response)
     }
-
 }
