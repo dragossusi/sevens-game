@@ -1,9 +1,10 @@
 package ro.sevens.game.room
 
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.round.Round
 import ro.sevens.game.session.PlayerSession
 
-interface RoundedRoom<R : Round> : Room {
+interface RoundedRoom<L : PlayerListener, R : Round> : Room<L> {
 
     val rounds: List<R>
 

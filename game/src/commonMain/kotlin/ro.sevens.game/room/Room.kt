@@ -2,8 +2,7 @@ package ro.sevens.game.room
 
 import kotlinx.coroutines.CoroutineScope
 import ro.sevens.game.deck.Deck
-import ro.sevens.game.listener.*
-import ro.sevens.game.round.Round
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.session.PlayerSession
 import ro.sevens.payload.Card
 import ro.sevens.payload.base.GameTypeData
@@ -29,7 +28,7 @@ import ro.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface Room : RoomListeners, CoroutineScope {
+interface Room<L : PlayerListener> : CoroutineScope {
 
     val roundEndDelay: Long
     val id: Long
@@ -72,22 +71,18 @@ interface Room : RoomListeners, CoroutineScope {
 
     suspend fun addPlayerSession(
         playerSession: PlayerSession,
-        onRoomChanged: OnRoomChanged
+        listener: L
     ): Boolean
-
-    interface OnRoomChanged : OnPlayerTurn, OnRoomConnected, OnGameStarted, OnGameEnded {
-        suspend fun onRoomStopped()
-    }
 
     var status: RoomStatus
 }
 
-val Room.playerCount: Int
+val Room<*>.playerCount: Int
     get() = players.size
 
-val Room.maxPlayers: Int
+val Room<*>.maxPlayers: Int
     get() = type.maxPlayers
 
 
-val Room.simplePlayers: List<SimplePlayerResponse>
+val Room<*>.simplePlayers: List<SimplePlayerResponse>
     get() = players.map(PlayerSession::toSimplePlayer)

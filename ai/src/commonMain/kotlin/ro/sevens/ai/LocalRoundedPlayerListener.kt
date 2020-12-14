@@ -1,7 +1,8 @@
 package ro.sevens.ai
 
+import ro.sevens.ai.player.LocalPlayerListener
 import ro.sevens.game.bridge.RoundedCommunication
-import ro.sevens.game.room.Room
+import ro.sevens.game.listener.RoundedPlayerListener
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.NewRoundResponse
 
@@ -25,17 +26,16 @@ import ro.sevens.payload.game.NewRoundResponse
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class LocalOnRoundedRoomChanged(
-    override val sevensCommunication: RoundedCommunication,
+class LocalRoundedPlayerListener<C : RoundedCommunication>(
     private val tagLogger: TagLogger?
-) : LocalOnRoomChanged(sevensCommunication, tagLogger), Room.OnRoundedRoomChanged {
+) : LocalPlayerListener<C>(tagLogger), RoundedPlayerListener {
 
     override fun onRoundEnded(response: NewRoundResponse) {
-        sevensCommunication.onRoundEnded?.onRoundEnded(response)
+        sevensCommunication?.onRoundEnded?.onRoundEnded(response)
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {
         tagLogger?.i("onRoundStarted: $response")
-        sevensCommunication.onRoundStarted?.onRoundStarted(response)
+        sevensCommunication?.onRoundStarted?.onRoundStarted(response)
     }
 }

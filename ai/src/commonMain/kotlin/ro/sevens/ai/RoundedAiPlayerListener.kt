@@ -1,16 +1,12 @@
 package ro.sevens.ai
 
 import kotlinx.coroutines.*
-import ro.sevens.game.room.Room
+import ro.sevens.ai.brain.SevensAiBrain
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.room.RoundedRoom
 import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
-import ro.sevens.payload.game.GameEndResponse
-import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
-import ro.sevens.payload.game.SimplePlayerResponse
-import kotlin.coroutines.CoroutineContext
 
 /**
  * sevens-game
@@ -31,13 +27,13 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class RoundedAiPlayerListener<R:Round>(
+class RoundedAiPlayerListener<L : PlayerListener, R : Round>(
     private val player: SevensAiPlayer,
-    private val room: RoundedRoom<R>,
+    private val room: RoundedRoom<L, R>,
     private val tagLogger: TagLogger?,
     private val operationDelay: Long,
     dispather: CoroutineDispatcher
-) : AiPlayerListener(player, room, tagLogger, operationDelay, dispather) {
+) : SevensAiBrain<L>(player, room, tagLogger, operationDelay, dispather) {
 
     override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
         launch {

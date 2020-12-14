@@ -1,6 +1,8 @@
-package ro.sevens.ai
+package ro.sevens.ai.room
 
 import kotlinx.coroutines.CoroutineDispatcher
+import ro.sevens.ai.SevensAiPlayer
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.room.Room
 import ro.sevens.game.round.Round
 import ro.sevens.game.session.PlayerSession
@@ -28,10 +30,10 @@ import ro.sevens.payload.base.GameTypeData
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class AiRoom<R : Round, RM : Room> constructor(
-    private val tagLogger: TagLogger?,
-    private val dispatcher: CoroutineDispatcher,
-    private val operationDelay: Long,
+abstract class AiRoom<L : PlayerListener, R : Round, RM : Room<L>> constructor(
+    protected val tagLogger: TagLogger?,
+    protected val dispatcher: CoroutineDispatcher,
+    protected val operationDelay: Long,
     internal val room: RM
 ) {
 
@@ -43,24 +45,20 @@ abstract class AiRoom<R : Round, RM : Room> constructor(
             room,
             Player(-room.players.size.toLong() - 1L, name, null)
         )
-        val listener = AiPlayerListener(
-            player = createPlayerListener(playerSession),
-            room = room,
-            tagLogger = tagLogger, //todo change me
-            dispather = dispatcher,
-            operationDelay = operationDelay
-        )
+        val listener = createBrain(playerSession)
         room.addPlayerSession(playerSession, listener)
     }
 
     abstract fun createSession(room: RM, player: Player): PlayerSession
     abstract fun createPlayerListener(session: PlayerSession): SevensAiPlayer
 
-    suspend fun addPlayer(session: PlayerSession, listener: Room.OnRoomChanged) {
+    suspend fun addPlayer(session: PlayerSession, listener: L) {
         room.addPlayerSession(
             playerSession = session,
-            onRoomChanged = listener
+            listener = listener
         )
     }
+
+    abstract fun createBrain(playerSession: PlayerSession): L
 
 }

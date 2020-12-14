@@ -1,14 +1,16 @@
-package ro.sevens.ai
+package ro.sevens.ai.communication
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ro.sevens.ai.player.LocalPlayerListener
+import ro.sevens.ai.room.AiRoom
 import ro.sevens.game.bridge.AbsCommunication
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.room.Room
 import ro.sevens.game.round.Round
 import ro.sevens.game.session.PlayerSession
-import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.Player
 import kotlin.coroutines.CoroutineContext
@@ -32,16 +34,14 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-open class LocalCommunication<R : Round, RM : Room> constructor(
-    protected val aiRoom: AiRoom<R, RM>,
+abstract class LocalCommunication<L : PlayerListener, R : Round, RM : Room<L>> constructor(
+    protected val aiRoom: AiRoom<L, R, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
-    tagLogger: TagLogger,
-    playerInit: (Room, Player) -> PlayerSession
+    protected val playerListener: L
 ) : AbsCommunication(), CoroutineScope {
 
-    protected val playerSession = playerInit(aiRoom.room, player)
-    protected open val localOnRoomChanged = LocalOnRoomChanged(this, tagLogger)
+    protected val playerSession = PlayerSession(aiRoom.room, player)
 
     override val coroutineContext: CoroutineContext = dispatcher + Job()
 
@@ -53,7 +53,7 @@ open class LocalCommunication<R : Round, RM : Room> constructor(
 
     override fun connect() {
         launch {
-            aiRoom.addPlayer(playerSession, localOnRoomChanged)
+            aiRoom.addPlayer(playerSession, playerListener)
             for (i in 1 until aiRoom.type.maxPlayers)
                 aiRoom.addAi("AI $i")
         }

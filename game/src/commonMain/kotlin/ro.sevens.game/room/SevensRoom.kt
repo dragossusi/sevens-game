@@ -5,10 +5,7 @@ import ro.sevens.game.deck.Deck
 import ro.sevens.game.deck.DeckProvider
 import ro.sevens.game.hand.Hand
 import ro.sevens.game.hand.SevensHand
-import ro.sevens.game.listener.MapPlayerNotifier
-import ro.sevens.game.listener.MapRoundsNotifier
-import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.listener.RoundsNotifier
+import ro.sevens.game.listener.*
 import ro.sevens.game.round.SevensRound
 import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
@@ -42,10 +39,10 @@ class SevensRoom constructor(
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
-    roundsNotifier: RoundsNotifier<SevensRound> = MapRoundsNotifier(tagLogger),
+    roundsNotifier: RoundsNotifier<RoundedPlayerListener,SevensRound> = MapRoundsNotifier(tagLogger),
     override val coroutineContext: CoroutineContext,
     override val roundEndDelay: Long = 1250L
-) : BaseRoundedRoom<SevensRound>(roundsNotifier, playerNotifier, tagLogger) {
+) : BaseRoundedRoom<RoundedPlayerListener, SevensRound>(roundsNotifier, playerNotifier, tagLogger) {
 
     override suspend fun startGame() {
         currentPlayer = startingPlayer
@@ -82,32 +79,37 @@ class SevensRoom constructor(
         return result
     }
 
-    override suspend fun addCard(player: PlayerSession, card: Card): Boolean = withContext(coroutineContext) {
-        val result = chooseCard(player, card)
-        if (!result) return@withContext result
-        val nextPlayer = nextPlayer!!
-        val roundStartingPlayer = currentRound!!.startingPlayer
-        if (nextPlayer.id == roundStartingPlayer.id) {
-            if (currentRound!!.canContinue(nextPlayer, playerCount)) {
-                setPlayerTurn(nextPlayer)
-            } else {
-                val res = newRound(roundStartingPlayer)
-                if (!res) throw Exception("failed to start new round")
-            }
-        } else setPlayerTurn(nextPlayer)
-        return@withContext result
-    }
+    override suspend fun addCard(player: PlayerSession, card: Card): Boolean =
+        withContext(coroutineContext) {
+            val result = chooseCard(player, card)
+            if (!result) return@withContext result
+            val nextPlayer = nextPlayer!!
+            val roundStartingPlayer = currentRound!!.startingPlayer
+            if (nextPlayer.id == roundStartingPlayer.id) {
+                if (currentRound!!.canContinue(nextPlayer, playerCount)) {
+                    setPlayerTurn(nextPlayer)
+                } else {
+                    val res = newRound(roundStartingPlayer)
+                    if (!res) throw Exception("failed to start new round")
+                }
+            } else setPlayerTurn(nextPlayer)
+            return@withContext result
+        }
 
     override suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean {
         tagLogger?.w("${player.player.name} tried to choose a card which is not possible in this mode")
         return false
     }
 
-    override suspend fun addPlayerSession(playerSession: PlayerSession, onRoomChanged: Room.OnRoomChanged): Boolean = withContext(coroutineContext) {
+    override suspend fun addPlayerSession(
+        playerSession: PlayerSession,
+        listener: RoundedPlayerListener
+    ): Boolean = withContext(coroutineContext) {
         if (!canJoin || isFull) return@withContext false
         _players.add(playerSession)
-        addListener(playerSession, onRoomChanged)
-        onRoomChanged.onRoomConnected(id)
+        addRoomListener(playerSession, listener)
+        addRoundsListener(playerSession, listener)
+        listener.onRoomConnected(id)
         if (isFull)
             start()
         return@withContext true

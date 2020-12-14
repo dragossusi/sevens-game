@@ -1,13 +1,18 @@
-package ro.sevens.ai
+package ro.sevens.ai.brain
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import ro.sevens.ai.SevensAiPlayer
+import ro.sevens.game.listener.PlayerListener
+import ro.sevens.game.room.OnRoundsChangedListener
 import ro.sevens.game.room.Room
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.game.GameEndResponse
 import ro.sevens.payload.game.NewRoundResponse
 import ro.sevens.payload.game.PlayerTurnResponse
 import ro.sevens.payload.game.SimplePlayerResponse
-import kotlin.coroutines.CoroutineContext
 
 /**
  * sevens-game
@@ -28,17 +33,13 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-open class AiPlayerListener(
+open class SevensAiBrain<L : PlayerListener>(
     private val player: SevensAiPlayer,
-    private val room: Room,
+    private val room: Room<L>,
     private val tagLogger: TagLogger?,
     private val operationDelay: Long,
     dispather: CoroutineDispatcher
-) : Room.OnRoomChanged, CoroutineScope {
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext = dispather + job
+) : RoundedAiBrain(dispather), OnRoundsChangedListener, CoroutineScope {
 
     override suspend fun onRoomStopped() {
         tagLogger?.w("TODO Not yet implemented")

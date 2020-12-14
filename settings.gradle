@@ -1,23 +1,4 @@
-pluginManagement {
-    repositories {
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-
-        mavenCentral()
-
-        maven { url 'https://plugins.gradle.org/m2/' }
-    }
-}
-
 rootProject.name = 'sevens-game'
+
 include ":game"
 include ":ai"
-
-
-// preload
-include ":payload"
-project(":payload").projectDir = file("../sevens-payload/payload")
-//core
-include ":logger"
-project(":logger").projectDir = file("../sevens-core/logger")
-include ":game-listener"
-project(":game-listener").projectDir = file("../sevens-core/game-listener")

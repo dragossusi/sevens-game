@@ -1,5 +1,6 @@
 package ro.sevens.game.listener
 
+import ro.sevens.game.room.OnRoomChangedListener
 import ro.sevens.game.room.Room
 import ro.sevens.game.room.simplePlayers
 import ro.sevens.game.round.Round
@@ -32,9 +33,9 @@ import ro.sevens.payload.game.PlayerTurnResponse
  */
 class MapPlayerNotifier(
     private val tagLogger: TagLogger?
-) : MapNotifier(), PlayerNotifier {
+) : MapNotifier<OnRoomChangedListener>(), PlayerNotifier {
 
-    override suspend fun onRoomStopped(room: Room) {
+    override suspend fun onRoomStopped(room: Room<*>) {
         room.run {
             tagLogger?.d("onRoomStopped ${room.id}")
             listeners.forEach {
@@ -43,7 +44,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onGameEnded(room: Room) {
+    override suspend fun onGameEnded(room: Room<*>) {
         room.run {
             tagLogger?.d("onGameEnded ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -64,7 +65,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onGameStarted(room: Room) {
+    override suspend fun onGameStarted(room: Room<*>) {
         room.run {
             tagLogger?.d("onGameStarted ${room.id}")
             val simplePlayers = simplePlayers.toTypedArray()
@@ -74,7 +75,7 @@ class MapPlayerNotifier(
         }
     }
 
-    override suspend fun onPlayerTurn(room: Room) {
+    override suspend fun onPlayerTurn(room: Room<*>) {
         room.run {
             tagLogger?.d("onPlayerTurn ${id}")
             val simplePlayers = simplePlayers.toTypedArray()

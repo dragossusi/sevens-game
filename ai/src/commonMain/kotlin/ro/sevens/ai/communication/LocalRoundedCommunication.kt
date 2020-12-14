@@ -1,29 +1,26 @@
-package ro.sevens.ai
+package ro.sevens.ai.communication
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
+import ro.sevens.ai.room.AiRoom
 import ro.sevens.game.bridge.RoundedCommunication
 import ro.sevens.game.listener.OnRoundEnded
 import ro.sevens.game.listener.OnRoundStarted
-import ro.sevens.game.room.Room
+import ro.sevens.game.listener.RoundedPlayerListener
 import ro.sevens.game.room.RoundedRoom
 import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Player
 
-class LocalRoundedCommunication<R : Round, RM : RoundedRoom<R>>(
-    aiRoom: AiRoom<R, RM>,
+class LocalRoundedCommunication<L : RoundedPlayerListener, R : Round, RM : RoundedRoom<L, R>>(
+    aiRoom: AiRoom<L, R, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
-    tagLogger: TagLogger,
-    playerInit: (Room, Player) -> PlayerSession
-) : LocalCommunication<R, RM>(
+    playerListener: L
+) : LocalCommunication<L, R, RM>(
     aiRoom,
     player,
     dispatcher,
-    tagLogger,
-    playerInit
+    playerListener
 ), RoundedCommunication {
 
     override var onRoundStarted: OnRoundStarted? = null

@@ -29,7 +29,7 @@ import ro.sevens.payload.game.SimplePlayerResponse
  *
  */
 class PlayerSession constructor(
-    val room: Room,
+    val room: Room<*>,
     val player: Player,
     var hand: Hand? = null
 ) {

@@ -6,6 +6,7 @@ import ro.sevens.game.deck.DeckProvider
 import ro.sevens.game.hand.Hand
 import ro.sevens.game.hand.SevensHand
 import ro.sevens.game.listener.MapPlayerNotifier
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.listener.PlayerNotifier
 import ro.sevens.game.session.PlayerSession
 import ro.sevens.logger.TagLogger
@@ -41,7 +42,7 @@ class MacaoRoom constructor(
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
     override val coroutineContext: CoroutineContext,
     override val roundEndDelay: Long = 1250L
-) : BaseRoom(playerNotifier, tagLogger) {
+) : BaseRoom<PlayerListener>(playerNotifier, tagLogger) {
 
     override val deck: Deck = deckProvider.createDeck(SupportedGame.SEVENS, type)
 
@@ -73,19 +74,6 @@ class MacaoRoom constructor(
         return false
     }
 
-    override suspend fun addPlayerSession(
-        playerSession: PlayerSession,
-        onRoomChanged: Room.OnRoomChanged
-    ): Boolean = withContext(coroutineContext) {
-        if (!canJoin || isFull) return@withContext false
-        _players.add(playerSession)
-        addListener(playerSession, onRoomChanged)
-        onRoomChanged.onRoomConnected(id)
-        if (isFull)
-            start()
-        return@withContext true
-    }
-
     private fun drawCards(owner: PlayerSession) {
         val maxPlayers = type.maxPlayers
         while (owner.cardsCount <= 5 && remainingCards.isNotEmpty()) {
@@ -102,6 +90,19 @@ class MacaoRoom constructor(
 
     override fun createHand(): Hand {
         return SevensHand()
+    }
+
+    override suspend fun addPlayerSession(
+        playerSession: PlayerSession,
+        listener: PlayerListener
+    ): Boolean = withContext(coroutineContext) {
+        if (!canJoin || isFull) return@withContext false
+        _players.add(playerSession)
+        addRoomListener(playerSession, listener)
+        listener.onRoomConnected(id)
+        if (isFull)
+            start()
+        return@withContext true
     }
 
 }

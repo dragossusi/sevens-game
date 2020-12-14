@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import ro.sevens.ai.room.SevensAiRoom
 import ro.sevens.game.deck.DeckProviderImpl
 import ro.sevens.game.room.MacaoRoom
 import ro.sevens.game.room.SevensRoom

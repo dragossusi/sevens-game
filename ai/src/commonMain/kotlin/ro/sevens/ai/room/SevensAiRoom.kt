@@ -1,6 +1,9 @@
-package ro.sevens.ai
+package ro.sevens.ai.room
 
 import kotlinx.coroutines.CoroutineDispatcher
+import ro.sevens.ai.brain.SevensAiBrain
+import ro.sevens.ai.SevensAiPlayer
+import ro.sevens.game.listener.RoundedPlayerListener
 import ro.sevens.game.room.SevensRoom
 import ro.sevens.game.round.SevensRound
 import ro.sevens.game.session.PlayerSession
@@ -32,7 +35,17 @@ class SevensAiRoom(
     dispatcher: CoroutineDispatcher,
     operationDelay: Long,
     room: SevensRoom
-) : AiRoom<SevensRound, SevensRoom>(tagLogger, dispatcher, operationDelay, room) {
+) : AiRoom<RoundedPlayerListener, SevensRound, SevensRoom>(tagLogger, dispatcher, operationDelay, room) {
+
+    override fun createBrain(playerSession: PlayerSession): RoundedPlayerListener {
+        return SevensAiBrain(
+            player = createPlayerListener(playerSession),
+            room = room,
+            tagLogger = tagLogger, //todo change me
+            dispather = dispatcher,
+            operationDelay = operationDelay
+        )
+    }
 
     override fun createSession(room: SevensRoom, player: Player): PlayerSession {
         return PlayerSession(room, player)

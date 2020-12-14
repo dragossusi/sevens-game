@@ -1,13 +1,12 @@
 package ro.sevens.game.listener
 
-import ro.sevens.game.room.Room
 import ro.sevens.game.session.PlayerSession
 
-open class MapNotifier : RoomListeners {
+open class MapNotifier<N> : ListenerCollection<N> {
 
-    protected val listeners = mutableMapOf<PlayerSession, Room.OnRoomChanged>()
+    protected val listeners = mutableMapOf<PlayerSession, N>()
 
-    override fun addListener(player: PlayerSession, onRoomChanged: Room.OnRoomChanged) {
+    override fun addListener(player: PlayerSession, onRoomChanged: N) {
         listeners[player] = onRoomChanged
     }
 

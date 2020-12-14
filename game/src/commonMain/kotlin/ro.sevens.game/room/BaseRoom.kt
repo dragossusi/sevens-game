@@ -1,12 +1,10 @@
 package ro.sevens.game.room
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import ro.sevens.game.hand.Hand
+import ro.sevens.game.listener.PlayerListener
 import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.round.Round
 import ro.sevens.game.session.PlayerSession
-import ro.sevens.game.session.chooseCard
 import ro.sevens.logger.TagLogger
 import ro.sevens.payload.Card
 import ro.sevens.payload.enums.RoomStatus
@@ -30,10 +28,10 @@ import ro.sevens.payload.enums.RoomStatus
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class BaseRoom(
+abstract class BaseRoom<L : PlayerListener>(
     protected val playerNotifier: PlayerNotifier,
     protected val tagLogger: TagLogger?
-) : Room {
+) : Room<L> {
 
     override var status = RoomStatus.WAITING
         set(value) {
@@ -73,11 +71,14 @@ abstract class BaseRoom(
         return _remainingCards.removeLast()
     }
 
-    override fun addListener(player: PlayerSession, onRoomChanged: Room.OnRoomChanged) {
+    fun addRoomListener(
+        player: PlayerSession,
+        onRoomChanged: OnRoomChangedListener
+    ) {
         playerNotifier.addListener(player, onRoomChanged)
     }
 
-    override fun removeListener(player: PlayerSession) {
+    fun removeRoomListener(player: PlayerSession) {
         playerNotifier.removeListener(player)
     }
 

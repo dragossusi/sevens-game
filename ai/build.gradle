@@ -1,7 +1,9 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'// version "$kotlin_version"
+    id 'maven-publish'
 }
 
+group 'ro.sevens'
 version '0.0.1'
 
 kotlin {
@@ -10,13 +12,14 @@ kotlin {
     *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
     jvm()
     js()
-    ios() {
-        binaries {
-            framework {
-                baseName = "SevensAi"
-            }
-        }
-    }
+//    ios() {
+//        binaries {
+//            framework {
+//                baseName = "SevensAi"
+//            }
+//        }
+//    }
+//    linuxX64()
     sourceSets {
         commonMain {
             dependencies {
@@ -24,9 +27,9 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
 
                 // modules
-                implementation project(":payload")
-                implementation project(":logger")
-                implementation project(":game-listener")
+                implementation "ro.sevens:payload:0.0.1"
+                implementation "ro.sevens:logger:0.0.1"
+                implementation "ro.sevens:game-listener:0.0.1"
 
                 //local
                 implementation project(":game")

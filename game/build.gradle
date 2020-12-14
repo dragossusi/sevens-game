@@ -15,14 +15,14 @@ kotlin {
     js() {
         nodejs()
     }
-    ios() {
-        binaries {
-            framework {
-                baseName = "SevensGame"
-            }
-        }
-    }
-    linuxX64()
+//    ios() {
+//        binaries {
+//            framework {
+//                baseName = "SevensGame"
+//            }
+//        }
+//    }
+//    linuxX64()
     sourceSets {
         commonMain {
             dependencies {
@@ -31,9 +31,9 @@ kotlin {
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
 
                 //modules
-                implementation project(":payload")
-                implementation project(":logger")
-                implementation project(":game-listener")
+                implementation "ro.sevens:payload:0.0.1"
+                implementation "ro.sevens:logger:0.0.1"
+                implementation "ro.sevens:game-listener:0.0.1"
             }
         }
         commonTest {

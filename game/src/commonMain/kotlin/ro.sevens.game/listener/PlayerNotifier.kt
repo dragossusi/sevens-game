@@ -1,8 +1,7 @@
 package ro.sevens.game.listener
 
+import ro.sevens.game.room.OnRoomChangedListener
 import ro.sevens.game.room.Room
-import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
 
 
 /**
@@ -24,9 +23,9 @@ import ro.sevens.game.session.PlayerSession
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface PlayerNotifier : RoomListeners {
-    suspend fun onRoomStopped(room: Room)
-    suspend fun onPlayerTurn(room: Room)
-    suspend fun onGameEnded(room: Room)
-    suspend fun onGameStarted(room: Room)
+interface PlayerNotifier : ListenerCollection<OnRoomChangedListener> {
+    suspend fun onRoomStopped(room: Room<*>)
+    suspend fun onPlayerTurn(room: Room<*>)
+    suspend fun onGameEnded(room: Room<*>)
+    suspend fun onGameStarted(room: Room<*>)
 }
