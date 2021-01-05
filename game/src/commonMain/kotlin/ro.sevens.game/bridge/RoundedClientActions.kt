@@ -1,4 +1,4 @@
-package ro.sevens.game.bridge
+package ro.dragossusi.sevens.game.bridge
 
 interface RoundedClientActions : ClientActions {
     fun endRound()

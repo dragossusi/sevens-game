@@ -1,9 +1,9 @@
-package ro.sevens.game.room
+package ro.dragossusi.sevens.game.room
 
-import ro.sevens.game.listener.OnGameEnded
-import ro.sevens.game.listener.OnGameStarted
-import ro.sevens.game.listener.OnPlayerTurn
-import ro.sevens.game.listener.OnRoomConnected
+import ro.dragossusi.sevens.game.listener.OnGameEnded
+import ro.dragossusi.sevens.game.listener.OnGameStarted
+import ro.dragossusi.sevens.game.listener.OnPlayerTurn
+import ro.dragossusi.sevens.game.listener.OnRoomConnected
 
 /**
  *

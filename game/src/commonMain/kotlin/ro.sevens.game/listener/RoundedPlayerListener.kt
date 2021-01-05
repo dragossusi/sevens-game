@@ -1,6 +1,6 @@
-package ro.sevens.game.listener
+package ro.dragossusi.sevens.game.listener
 
-import ro.sevens.game.room.OnRoundsChangedListener
+import ro.dragossusi.sevens.game.room.OnRoundsChangedListener
 
 interface RoundedPlayerListener : PlayerListener, OnRoundsChangedListener {
 }

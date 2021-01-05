@@ -1,15 +1,15 @@
-package ro.sevens.ai.room
+package ro.dragossusi.sevens.ai.room
 
 import kotlinx.coroutines.CoroutineDispatcher
-import ro.sevens.ai.brain.SevensAiBrain
-import ro.sevens.ai.SevensAiPlayer
-import ro.sevens.game.listener.RoundedPlayerListener
-import ro.sevens.game.room.SevensRoom
-import ro.sevens.game.round.SevensRound
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.Player
-import ro.sevens.payload.enums.GameTypeEnum
+import ro.dragossusi.sevens.ai.brain.SevensAiBrain
+import ro.dragossusi.sevens.ai.SevensAiPlayer
+import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
+import ro.dragossusi.sevens.game.room.SevensRoom
+import ro.dragossusi.sevens.game.round.SevensRound
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.Player
+import ro.dragossusi.sevens.payload.enums.GameTypeEnum
 
 /**
  * sevens-game

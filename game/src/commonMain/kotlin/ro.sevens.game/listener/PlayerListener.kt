@@ -1,6 +1,6 @@
-package ro.sevens.game.listener
+package ro.dragossusi.sevens.game.listener
 
-import ro.sevens.game.room.OnRoomChangedListener
+import ro.dragossusi.sevens.game.room.OnRoomChangedListener
 
 interface PlayerListener : OnRoomChangedListener {
 }

@@ -1,10 +1,10 @@
-package ro.sevens.game.round
+package ro.dragossusi.sevens.game.round
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
-import ro.sevens.payload.canCut
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.canCut
 
 /**
  * server

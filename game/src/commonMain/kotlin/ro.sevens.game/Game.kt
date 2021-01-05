@@ -1,7 +1,7 @@
-package ro.sevens.game
+package ro.dragossusi.sevens.game
 
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
 
 interface Game {
     fun chooseCard(session: PlayerSession, card: Card): Boolean

@@ -1,15 +1,15 @@
-package ro.sevens.ai.communication
+package ro.dragossusi.sevens.ai.communication
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import ro.sevens.ai.room.AiRoom
-import ro.sevens.game.bridge.RoundedCommunication
-import ro.sevens.game.listener.OnRoundEnded
-import ro.sevens.game.listener.OnRoundStarted
-import ro.sevens.game.listener.RoundedPlayerListener
-import ro.sevens.game.room.RoundedRoom
-import ro.sevens.game.round.Round
-import ro.sevens.payload.Player
+import ro.dragossusi.sevens.ai.room.AiRoom
+import ro.dragossusi.sevens.game.bridge.RoundedCommunication
+import ro.dragossusi.sevens.game.listener.OnRoundEnded
+import ro.dragossusi.sevens.game.listener.OnRoundStarted
+import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
+import ro.dragossusi.sevens.game.room.RoundedRoom
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.payload.Player
 
 class LocalRoundedCommunication<L : RoundedPlayerListener, R : Round, RM : RoundedRoom<L, R>>(
     aiRoom: AiRoom<L, R, RM>,

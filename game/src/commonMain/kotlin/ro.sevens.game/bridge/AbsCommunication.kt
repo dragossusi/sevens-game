@@ -1,6 +1,6 @@
-package ro.sevens.game.bridge
+package ro.dragossusi.sevens.game.bridge
 
-import ro.sevens.game.listener.*
+import ro.dragossusi.sevens.game.listener.*
 
 /**
  * sevens-client

@@ -1,7 +1,7 @@
-package ro.sevens.game.hand
+package ro.dragossusi.sevens.game.hand
 
-import ro.sevens.game.ListContainer
-import ro.sevens.payload.Card
+import ro.dragossusi.sevens.game.ListContainer
+import ro.dragossusi.sevens.payload.Card
 
 /**
  * server

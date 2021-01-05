@@ -1,4 +1,4 @@
-package ro.sevens.game
+package ro.dragossusi.sevens.game
 
 
 /**

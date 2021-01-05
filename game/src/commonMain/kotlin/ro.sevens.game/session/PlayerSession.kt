@@ -1,13 +1,13 @@
-package ro.sevens.game.session
+package ro.dragossusi.sevens.game.session
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ro.sevens.game.hand.Hand
-import ro.sevens.game.room.Room
-import ro.sevens.game.round.Round
-import ro.sevens.payload.Card
-import ro.sevens.payload.Player
-import ro.sevens.payload.game.SimplePlayerResponse
+import ro.dragossusi.sevens.game.hand.Hand
+import ro.dragossusi.sevens.game.room.Room
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.Player
+import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
 
 /**
  * server

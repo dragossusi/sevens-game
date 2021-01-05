@@ -1,18 +1,18 @@
-package ro.sevens.ai.communication
+package ro.dragossusi.sevens.ai.communication
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ro.sevens.ai.player.LocalPlayerListener
-import ro.sevens.ai.room.AiRoom
-import ro.sevens.game.bridge.AbsCommunication
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.room.Room
-import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
-import ro.sevens.payload.Player
+import ro.dragossusi.sevens.ai.player.LocalPlayerListener
+import ro.dragossusi.sevens.ai.room.AiRoom
+import ro.dragossusi.sevens.game.bridge.AbsCommunication
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.room.Room
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.Player
 import kotlin.coroutines.CoroutineContext
 
 /**

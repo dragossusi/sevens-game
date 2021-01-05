@@ -1,18 +1,18 @@
-package ro.sevens.game.room
+package ro.dragossusi.sevens.game.room
 
 import kotlinx.coroutines.withContext
-import ro.sevens.game.deck.Deck
-import ro.sevens.game.deck.DeckProvider
-import ro.sevens.game.hand.Hand
-import ro.sevens.game.hand.SevensHand
-import ro.sevens.game.listener.MapPlayerNotifier
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.Card
-import ro.sevens.payload.base.GameTypeData
-import ro.sevens.payload.enums.SupportedGame
+import ro.dragossusi.sevens.game.deck.Deck
+import ro.dragossusi.sevens.game.deck.DeckProvider
+import ro.dragossusi.sevens.game.hand.Hand
+import ro.dragossusi.sevens.game.hand.SevensHand
+import ro.dragossusi.sevens.game.listener.MapPlayerNotifier
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.listener.PlayerNotifier
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.enums.SupportedGame
 import kotlin.coroutines.CoroutineContext
 
 /**

@@ -1,18 +1,18 @@
-package ro.sevens.ai.brain
+package ro.dragossusi.sevens.ai.brain
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ro.sevens.ai.SevensAiPlayer
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.room.OnRoundsChangedListener
-import ro.sevens.game.room.Room
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.game.GameEndResponse
-import ro.sevens.payload.game.NewRoundResponse
-import ro.sevens.payload.game.PlayerTurnResponse
-import ro.sevens.payload.game.SimplePlayerResponse
+import ro.dragossusi.sevens.ai.SevensAiPlayer
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.room.OnRoundsChangedListener
+import ro.dragossusi.sevens.game.room.Room
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.game.GameEndResponse
+import ro.dragossusi.sevens.payload.game.NewRoundResponse
+import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
+import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
 
 /**
  * sevens-game

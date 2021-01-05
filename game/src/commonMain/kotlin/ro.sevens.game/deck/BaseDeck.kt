@@ -1,6 +1,6 @@
-package ro.sevens.game.deck
+package ro.dragossusi.sevens.game.deck
 
-import ro.sevens.payload.Card
+import ro.dragossusi.sevens.payload.Card
 
 
 /**

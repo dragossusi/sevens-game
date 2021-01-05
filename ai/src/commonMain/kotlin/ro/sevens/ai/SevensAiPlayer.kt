@@ -1,12 +1,12 @@
-package ro.sevens.ai
+package ro.dragossusi.sevens.ai
 
-import ro.sevens.game.hand.Hand
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
-import ro.sevens.payload.base.GameTypeData
-import ro.sevens.payload.extensions.firstCut
-import ro.sevens.payload.extensions.pointsCount
-import ro.sevens.payload.isCut
+import ro.dragossusi.sevens.game.hand.Hand
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.extensions.firstCut
+import ro.dragossusi.sevens.payload.extensions.pointsCount
+import ro.dragossusi.sevens.payload.isCut
 
 
 /**

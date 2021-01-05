@@ -1,9 +1,9 @@
-package ro.sevens.game.round
+package ro.dragossusi.sevens.game.round
 
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
-import ro.sevens.payload.game.CardsContainer
-import ro.sevens.payload.game.RoundResponse
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.game.CardsContainer
+import ro.dragossusi.sevens.payload.game.RoundResponse
 
 /**
  * server

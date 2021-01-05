@@ -1,28 +1,25 @@
-package ro.dragossusi.sevens.game.bridge
-
-import ro.dragossusi.sevens.payload.Card
-
-
 /**
- * Sevens
+ * SevensGame
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
  *
- * Sevens is free software: you can redistribute it and/or modify
+ * SevensGame is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
- * sSevens is distributed in the hope that it will be useful,
+ * SevensGame is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
+ * along with SevensGame.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-interface ClientActions {
-    fun placeCard(card: Card)
-    fun drawCard()
+object Versions {
+    const val kotlin = "1.4.21"
+    const val serialization = "1.0.1"
+    const val coroutines = "1.4.2"
+    const val app = "1.0.2"
 }

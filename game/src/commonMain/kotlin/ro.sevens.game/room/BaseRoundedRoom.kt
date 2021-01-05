@@ -1,16 +1,16 @@
-package ro.sevens.game.room
+package ro.dragossusi.sevens.game.room
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.listener.PlayerNotifier
-import ro.sevens.game.listener.RoundedPlayerListener
-import ro.sevens.game.listener.RoundsNotifier
-import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.game.session.chooseCard
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.Card
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.listener.PlayerNotifier
+import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
+import ro.dragossusi.sevens.game.listener.RoundsNotifier
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.chooseCard
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.Card
 
 abstract class BaseRoundedRoom<L : RoundedPlayerListener, R : Round>(
     protected val roundsNotifier: RoundsNotifier<L, R>,

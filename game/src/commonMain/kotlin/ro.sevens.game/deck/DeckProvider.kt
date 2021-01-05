@@ -1,7 +1,7 @@
-package ro.sevens.game.deck
+package ro.dragossusi.sevens.game.deck
 
-import ro.sevens.payload.base.GameTypeData
-import ro.sevens.payload.enums.SupportedGame
+import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.enums.SupportedGame
 
 /**
  * server

@@ -1,9 +1,9 @@
-package ro.sevens.ai.brain
+package ro.dragossusi.sevens.ai.brain
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import ro.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.listener.PlayerListener
 import kotlin.coroutines.CoroutineContext
 
 abstract class AiBrain(

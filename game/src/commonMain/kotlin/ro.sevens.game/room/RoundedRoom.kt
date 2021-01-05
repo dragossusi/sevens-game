@@ -1,8 +1,8 @@
-package ro.sevens.game.room
+package ro.dragossusi.sevens.game.room
 
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.round.Round
-import ro.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.game.session.PlayerSession
 
 interface RoundedRoom<L : PlayerListener, R : Round> : Room<L> {
 

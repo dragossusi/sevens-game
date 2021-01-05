@@ -1,6 +1,6 @@
-package ro.sevens.game.listener
+package ro.dragossusi.sevens.game.listener
 
-import ro.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.PlayerSession
 
 
 /**

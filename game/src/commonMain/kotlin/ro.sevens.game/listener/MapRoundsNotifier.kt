@@ -1,11 +1,11 @@
-package ro.sevens.game.listener
+package ro.dragossusi.sevens.game.listener
 
-import ro.sevens.game.room.OnRoundsChangedListener
-import ro.sevens.game.room.RoundedRoom
-import ro.sevens.game.room.simplePlayers
-import ro.sevens.game.round.Round
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.game.NewRoundResponse
+import ro.dragossusi.sevens.game.room.OnRoundsChangedListener
+import ro.dragossusi.sevens.game.room.RoundedRoom
+import ro.dragossusi.sevens.game.room.simplePlayers
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.game.NewRoundResponse
 
 class MapRoundsNotifier<L : RoundedPlayerListener, R : Round>(
     private val tagLogger: TagLogger?,

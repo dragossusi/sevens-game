@@ -1,7 +1,7 @@
-package ro.sevens.ai.brain
+package ro.dragossusi.sevens.ai.brain
 
 import kotlinx.coroutines.CoroutineDispatcher
-import ro.sevens.game.listener.RoundedPlayerListener
+import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
 
 abstract class RoundedAiBrain(dispather: CoroutineDispatcher) : AiBrain(dispather), RoundedPlayerListener {
 }

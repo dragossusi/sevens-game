@@ -1,10 +1,10 @@
-package ro.sevens.ai
+package ro.dragossusi.sevens.ai
 
-import ro.sevens.ai.player.LocalPlayerListener
-import ro.sevens.game.bridge.RoundedCommunication
-import ro.sevens.game.listener.RoundedPlayerListener
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.game.NewRoundResponse
+import ro.dragossusi.sevens.ai.player.LocalPlayerListener
+import ro.dragossusi.sevens.game.bridge.RoundedCommunication
+import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.game.NewRoundResponse
 
 
 /**

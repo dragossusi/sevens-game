@@ -1,15 +1,15 @@
-package ro.sevens.game.listener
+package ro.dragossusi.sevens.game.listener
 
-import ro.sevens.game.room.OnRoomChangedListener
-import ro.sevens.game.room.Room
-import ro.sevens.game.room.simplePlayers
-import ro.sevens.game.round.Round
-import ro.sevens.game.round.toResponse
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.logger.TagLogger
-import ro.sevens.payload.game.GameEndResponse
-import ro.sevens.payload.game.NewRoundResponse
-import ro.sevens.payload.game.PlayerTurnResponse
+import ro.dragossusi.sevens.game.room.OnRoomChangedListener
+import ro.dragossusi.sevens.game.room.Room
+import ro.dragossusi.sevens.game.room.simplePlayers
+import ro.dragossusi.sevens.game.round.Round
+import ro.dragossusi.sevens.game.round.toResponse
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.game.GameEndResponse
+import ro.dragossusi.sevens.payload.game.NewRoundResponse
+import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
 
 
 /**

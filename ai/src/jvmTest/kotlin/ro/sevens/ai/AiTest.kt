@@ -1,15 +1,15 @@
-package ro.sevens.ai
+package ro.dragossusi.sevens.ai
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import ro.sevens.ai.room.SevensAiRoom
-import ro.sevens.game.deck.DeckProviderImpl
-import ro.sevens.game.room.MacaoRoom
-import ro.sevens.game.room.SevensRoom
-import ro.sevens.logger.ConsoleLogger
-import ro.sevens.payload.enums.GameTypeEnum
+import ro.dragossusi.sevens.ai.room.SevensAiRoom
+import ro.dragossusi.sevens.game.deck.DeckProviderImpl
+import ro.dragossusi.sevens.game.room.MacaoRoom
+import ro.dragossusi.sevens.game.room.SevensRoom
+import ro.dragossusi.logger.ConsoleLogger
+import ro.dragossusi.sevens.payload.enums.GameTypeEnum
 
 /**
  * sevens-game

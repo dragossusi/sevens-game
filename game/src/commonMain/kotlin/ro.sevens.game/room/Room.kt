@@ -1,13 +1,13 @@
-package ro.sevens.game.room
+package ro.dragossusi.sevens.game.room
 
 import kotlinx.coroutines.CoroutineScope
-import ro.sevens.game.deck.Deck
-import ro.sevens.game.listener.PlayerListener
-import ro.sevens.game.session.PlayerSession
-import ro.sevens.payload.Card
-import ro.sevens.payload.base.GameTypeData
-import ro.sevens.payload.enums.RoomStatus
-import ro.sevens.payload.game.SimplePlayerResponse
+import ro.dragossusi.sevens.game.deck.Deck
+import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.payload.Card
+import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.enums.RoomStatus
+import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
 
 /**
  * server
