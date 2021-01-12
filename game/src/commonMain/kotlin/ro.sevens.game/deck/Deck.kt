@@ -5,6 +5,9 @@ import ro.dragossusi.sevens.payload.game.CardsContainer
 
 
 /**
+ *
+ * Used to know which cards are available to use in a game
+ *
  * server
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
@@ -26,8 +29,14 @@ import ro.dragossusi.sevens.payload.game.CardsContainer
 
 interface Deck : CardsContainer {
 
+    /**
+     * Available cards
+     */
     override val cards: List<Card>
 
+    /**
+     * Take available cards in a random order
+     */
     fun shuffle(): List<Card>
 
 }

@@ -22,7 +22,12 @@ abstract class BaseRoundedRoom<L : RoundedPlayerListener, R : Round>(
 
     override var currentRound: R? = null
 
-
+    /**
+     * Add round listener for a player
+     *
+     * @param player            the player that needs to be notified
+     * @param onRoundsChanged   the listener used to notify
+     */
     fun addRoundsListener(
         player: PlayerSession,
         onRoundsChanged: OnRoundsChangedListener
@@ -30,6 +35,11 @@ abstract class BaseRoundedRoom<L : RoundedPlayerListener, R : Round>(
         roundsNotifier.addListener(player, onRoundsChanged)
     }
 
+    /**
+     * Remove round listener for a player
+     *
+     * @param player    the player that needs the listener removed
+     */
     fun removeRoundsListener(player: PlayerSession) {
         roundsNotifier.removeListener(player)
     }
@@ -46,6 +56,11 @@ abstract class BaseRoundedRoom<L : RoundedPlayerListener, R : Round>(
         return@withContext false
     }
 
+    /**
+     * Chooses a card for a player
+     *
+     * @return true is successful
+     */
     protected suspend fun chooseCard(player: PlayerSession, card: Card): Boolean {
         val currentPlayer = currentPlayer ?: return false
         if (currentPlayer.id == player.id) {

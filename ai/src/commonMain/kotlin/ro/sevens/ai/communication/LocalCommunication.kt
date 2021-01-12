@@ -51,6 +51,12 @@ abstract class LocalCommunication<L : PlayerListener, R : Round, RM : Room<L>> c
         }
     }
 
+    override fun chooseCardType(type: Card.Type) {
+        launch {
+            aiRoom.room.chooseCardType(playerSession, type)
+        }
+    }
+
     override fun connect() {
         launch {
             aiRoom.addPlayer(playerSession, playerListener)

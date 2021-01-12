@@ -116,6 +116,9 @@ abstract class BaseRoom<L : PlayerListener>(
         }
     }
 
+    /**
+     * Sets the player's turn
+     */
     protected suspend fun setPlayerTurn(player: PlayerSession) {
         currentPlayer = player
         playerNotifier.onPlayerTurn(this)

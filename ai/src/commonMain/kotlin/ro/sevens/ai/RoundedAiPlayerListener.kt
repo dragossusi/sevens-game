@@ -6,6 +6,7 @@ import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.room.RoundedRoom
 import ro.dragossusi.sevens.game.round.Round
 import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.base.GameTypeData
 import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
 
 /**
@@ -39,7 +40,7 @@ class RoundedAiPlayerListener<L : PlayerListener, R : Round>(
         launch {
             delay(operationDelay)
             if (playerTurn.currentPlayerId == player.id) {
-                val canEnd = playerTurn.canEnd(room.type)
+                val canEnd = playerTurn.canEnd
                 val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
                 if (card == null && canEnd) room.newRound(player.session)
                 else room.addCard(
@@ -49,5 +50,13 @@ class RoundedAiPlayerListener<L : PlayerListener, R : Round>(
             }
         }
     }
+
+    val type: GameTypeData
+        get() = room.type
+
+    val PlayerTurnResponse.canEnd: Boolean
+        get() {
+            return roundCards.isNotEmpty() && roundCards.size % type.maxPlayers == 0
+        }
 
 }

@@ -15,6 +15,9 @@ import ro.dragossusi.sevens.payload.enums.SupportedGame
 import kotlin.coroutines.CoroutineContext
 
 /**
+ *
+ * Septica implementation
+ *
  * server
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
@@ -110,8 +113,6 @@ class SevensRoom constructor(
         addRoomListener(playerSession, listener)
         addRoundsListener(playerSession, listener)
         listener.onRoomConnected(id)
-        if (isFull)
-            start()
         return@withContext true
     }
 

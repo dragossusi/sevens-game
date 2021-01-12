@@ -10,6 +10,9 @@ import ro.dragossusi.sevens.payload.enums.RoomStatus
 import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
 
 /**
+ *
+ * Class containing game logic
+ *
  * server
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
@@ -30,59 +33,140 @@ import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
  */
 interface Room<L : PlayerListener> : CoroutineScope {
 
+    /**
+     * Delay starting a new round in millis
+     */
     val roundEndDelay: Long
+
+    /**
+     * Room id
+     */
     val id: Long
 
+    /**
+     * Players playing in this room
+     */
     val players: List<PlayerSession>
+
+    /**
+     * Check if the room is full(no more players can join)
+     */
     val isFull: Boolean
         get() = players.size >= maxPlayers
 
+    /**
+     * deck used
+     */
     val deck: Deck
 
+    /**
+     * current cards placed
+     */
     val currentCards: List<Card>?
+
+    /**
+     * remaining cards to be drawn
+     */
     val remainingCards: List<Card>
 
-    //todo
+    /**
+     * starting player
+     */
     val startingPlayer: PlayerSession
         get() = players[0]
 
+    /**
+     * game type
+     */
     val type: GameTypeData
 
+    /**
+     * current player
+     */
     var currentPlayer: PlayerSession?
+
+    /**
+     * next player
+     */
     val nextPlayer: PlayerSession?
         get() = currentPlayer?.let {
             players[(players.indexOf(it) + 1) % maxPlayers]
         }
 
+    /**
+     * Check if a player can join
+     */
     val canJoin: Boolean
+
+    /**
+     * Check if a round can start
+     */
     val canStartRound: Boolean
 
     //funs
 
+    /**
+     * add a card
+     *
+     * @param player    player that adds
+     * @param card      the card to add
+     */
     suspend fun addCard(player: PlayerSession, card: Card): Boolean
 
+    /**
+     * choose a card type
+     *
+     * @param player    Player that chooses
+     * @param type      Card Type to choose
+     */
     suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean
 
+    /**
+     * starts the room
+     */
     suspend fun start()
 
+    /**
+     * ends the game
+     */
     suspend fun endGame()
 
+    /**
+     * stop the room
+     */
     suspend fun stop()
 
+    /**
+     * Add a player with a listener
+     *
+     * @param playerSession     the player
+     * @param listener          player listener
+     */
     suspend fun addPlayerSession(
         playerSession: PlayerSession,
         listener: L
     ): Boolean
 
+    /**
+     * Status of the room
+     */
     var status: RoomStatus
 }
 
+/**
+ * Number of players in the room
+ */
 val Room<*>.playerCount: Int
     get() = players.size
 
+/**
+ * Max number of players allowed in the room
+ */
 val Room<*>.maxPlayers: Int
     get() = type.maxPlayers
 
-
+/**
+ * Get players in the room in a simple object used for serialization
+ */
 val Room<*>.simplePlayers: List<SimplePlayerResponse>
     get() = players.map(PlayerSession::toSimplePlayer)

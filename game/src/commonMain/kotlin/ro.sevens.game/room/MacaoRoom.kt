@@ -16,6 +16,9 @@ import ro.dragossusi.sevens.payload.enums.SupportedGame
 import kotlin.coroutines.CoroutineContext
 
 /**
+ *
+ * Macao implementation
+ *
  * server
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
@@ -100,8 +103,6 @@ class MacaoRoom constructor(
         _players.add(playerSession)
         addRoomListener(playerSession, listener)
         listener.onRoomConnected(id)
-        if (isFull)
-            start()
         return@withContext true
     }
 

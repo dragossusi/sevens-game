@@ -24,5 +24,6 @@ import ro.dragossusi.sevens.payload.Card
  */
 interface ClientActions {
     fun placeCard(card: Card)
+    fun chooseCardType(type: Card.Type)
     fun drawCard()
 }
