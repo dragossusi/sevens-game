@@ -40,7 +40,7 @@ class RoundedAiPlayerListener<L : PlayerListener, R : Round>(
         launch {
             delay(operationDelay)
             if (playerTurn.currentPlayerId == player.id) {
-                val canEnd = playerTurn.canEnd
+                val canEnd = playerTurn.canEnd(type)
                 val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
                 if (card == null && canEnd) room.newRound(player.session)
                 else room.addCard(
@@ -53,10 +53,5 @@ class RoundedAiPlayerListener<L : PlayerListener, R : Round>(
 
     val type: GameTypeData
         get() = room.type
-
-    val PlayerTurnResponse.canEnd: Boolean
-        get() {
-            return roundCards.isNotEmpty() && roundCards.size % type.maxPlayers == 0
-        }
 
 }

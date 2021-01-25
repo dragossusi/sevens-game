@@ -9,6 +9,7 @@ import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.room.OnRoundsChangedListener
 import ro.dragossusi.sevens.game.room.Room
 import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.payload.base.LobbyData
 import ro.dragossusi.sevens.payload.game.GameEndResponse
 import ro.dragossusi.sevens.payload.game.NewRoundResponse
 import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
@@ -40,6 +41,18 @@ open class SevensAiBrain<L : PlayerListener>(
     private val operationDelay: Long,
     dispather: CoroutineDispatcher
 ) : RoundedAiBrain(dispather), OnRoundsChangedListener, CoroutineScope {
+
+    override fun onLobbyConnected(lobby: LobbyData) {
+        tagLogger?.w("TODO Not yet implemented")
+    }
+
+    override fun onLobbyPlayerConnected(lobby: LobbyData) {
+        tagLogger?.w("TODO Not yet implemented")
+    }
+
+    override fun onLobbyPlayerDiconnected(lobby: LobbyData) {
+        tagLogger?.w("TODO Not yet implemented")
+    }
 
     override suspend fun onRoomStopped() {
         tagLogger?.w("TODO Not yet implemented")

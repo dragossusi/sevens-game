@@ -79,10 +79,14 @@ class PlayerSession constructor(
 
 }
 
-suspend fun <S : PlayerSession> S.chooseCard(round: Round, card: Card): Boolean {
+suspend fun PlayerSession.chooseCard(round: Round, card: Card): Boolean {
     val hand = hand ?: return false
-
     mutex.withLock(hand) {
+
+        if (!hand.hasCard(card))
+            return false
+        if (!round.canAddCard(card, this))
+            return false
         if (hand.chooseCard(card)) {
             round.addCard(card, this)
             hand.cards

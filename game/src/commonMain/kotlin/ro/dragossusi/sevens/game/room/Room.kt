@@ -106,6 +106,21 @@ interface Room<L : PlayerListener> : CoroutineScope {
     //funs
 
     /**
+     * Checks if user can draw card
+     *
+     * @param from the player who wants to draw a card
+     */
+    suspend fun canDrawCard(from: PlayerSession): Boolean
+
+    /**
+     * Checks if user can add this card
+     *
+     * @param card the card to check
+     * @param from the player who wants to add
+     */
+    suspend fun canAddCard(card: Card, from: PlayerSession): Boolean
+
+    /**
      * add a card
      *
      * @param player    player that adds
@@ -120,6 +135,14 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param type      Card Type to choose
      */
     suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean
+
+    /**
+     * draw a card
+     *
+     * @param player    Player that chooses
+     * @param type      Card Type to choose
+     */
+    suspend fun drawCard(player: PlayerSession): Boolean
 
     /**
      * starts the room

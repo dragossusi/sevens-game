@@ -55,6 +55,18 @@ class MacaoRoom constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun canDrawCard(from: PlayerSession): Boolean {
+        return false
+    }
+
+    override suspend fun drawCard(player: PlayerSession): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override val canStartRound: Boolean
         get() = players.all {
             it.cardsCount != 0

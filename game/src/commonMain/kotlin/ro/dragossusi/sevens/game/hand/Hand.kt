@@ -46,6 +46,12 @@ abstract class Hand private constructor(cards: MutableList<Card>) : ListContaine
         }
     }
 
+    fun hasCardNumber(number: Int): Boolean {
+        return cards.any {
+            it.number == number
+        }
+    }
+
     fun chooseCard(card: Card): Boolean {
         val index = _cards.indexOfFirst {
             it == card

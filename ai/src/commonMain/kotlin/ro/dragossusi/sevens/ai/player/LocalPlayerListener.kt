@@ -3,6 +3,7 @@ package ro.dragossusi.sevens.ai.player
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.game.bridge.Communication
 import ro.dragossusi.sevens.game.listener.PlayerListener
+import ro.dragossusi.sevens.payload.base.LobbyData
 import ro.dragossusi.sevens.payload.game.GameEndResponse
 import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
 import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
@@ -32,6 +33,21 @@ open class LocalPlayerListener<C : Communication>(
 ) : PlayerListener {
 
     var sevensCommunication: C? = null
+
+    override fun onLobbyConnected(lobby: LobbyData) {
+        tagLogger?.i("onLobbyConnected")
+        sevensCommunication?.onLobbyConnected?.onLobbyConnected(lobby)
+    }
+
+    override fun onLobbyPlayerConnected(lobby: LobbyData) {
+        tagLogger?.i("onLobbyPlayerConnected")
+        sevensCommunication?.onLobbyPlayerConnected?.onLobbyPlayerConnected(lobby)
+    }
+
+    override fun onLobbyPlayerDiconnected(lobby: LobbyData) {
+        tagLogger?.i("onLobbyPlayerDiconnected")
+        sevensCommunication?.onLobbyPlayerDisconnected?.onLobbyPlayerDiconnected(lobby)
+    }
 
     override suspend fun onRoomStopped() {
         tagLogger?.i("onRoomStopped")

@@ -62,6 +62,7 @@ abstract class LocalCommunication<L : PlayerListener, R : Round, RM : Room<L>> c
             aiRoom.addPlayer(playerSession, playerListener)
             for (i in 1 until aiRoom.type.maxPlayers)
                 aiRoom.addAi("AI $i")
+            aiRoom.room.start()
         }
     }
 
@@ -72,7 +73,9 @@ abstract class LocalCommunication<L : PlayerListener, R : Round, RM : Room<L>> c
     }
 
     override fun drawCard() {
-        TODO("Not yet implemented")
+        launch {
+            aiRoom.room.drawCard(playerSession)
+        }
     }
 
 }

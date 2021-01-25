@@ -1,5 +1,10 @@
+package ro.dragossusi.sevens.game.listener
+
 /**
  * SevensGame
+ *
+ * @author dragos
+ * @since 22/01/2021
  *
  * Copyright (C) 2020  Rachieru Dragos-Mihai
  *
@@ -17,9 +22,5 @@
  * along with SevensGame.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-object Versions {
-    const val kotlin = "1.4.21"
-    const val serialization = "1.0.1"
-    const val coroutines = "1.4.2"
-    const val app = "1.0.7"
+interface OnLobbyChangedListener : OnLobbyConnected, OnLobbyPlayerConnected, OnLobbyPlayerDisconnected {
 }

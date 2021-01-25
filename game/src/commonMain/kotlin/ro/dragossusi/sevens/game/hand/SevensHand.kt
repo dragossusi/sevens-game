@@ -1,7 +1,7 @@
 package ro.dragossusi.sevens.game.hand
 
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.isSevensPoint
+import ro.dragossusi.sevens.payload.card.isSevensPoint
 
 /**
  * sevens-game

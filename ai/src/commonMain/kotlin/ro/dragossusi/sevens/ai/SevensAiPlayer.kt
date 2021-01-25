@@ -4,9 +4,9 @@ import ro.dragossusi.sevens.game.hand.Hand
 import ro.dragossusi.sevens.game.session.PlayerSession
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.card.isCut
 import ro.dragossusi.sevens.payload.extensions.firstCut
 import ro.dragossusi.sevens.payload.extensions.pointsCount
-import ro.dragossusi.sevens.payload.isCut
 
 
 /**
@@ -61,7 +61,7 @@ class SevensAiPlayer constructor(
         if (placedCards.isEmpty()) return pickCard()
         val hand = hand!!
         val firstCard = placedCards.first()
-        if (hand.contains(firstCard)) return firstCard
+        if (hand.hasCardNumber(firstCard.number)) return firstCard
         if (placedCards.pointsCount > 0) {
             return hand.firstCut(type.maxPlayers)
         }

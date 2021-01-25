@@ -42,7 +42,7 @@ class SevensRoom constructor(
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
-    roundsNotifier: RoundsNotifier<RoundedPlayerListener,SevensRound> = MapRoundsNotifier(tagLogger),
+    roundsNotifier: RoundsNotifier<RoundedPlayerListener, SevensRound> = MapRoundsNotifier(tagLogger),
     override val coroutineContext: CoroutineContext,
     override val roundEndDelay: Long = 1250L
 ) : BaseRoundedRoom<RoundedPlayerListener, SevensRound>(roundsNotifier, playerNotifier, tagLogger) {
@@ -63,6 +63,10 @@ class SevensRoom constructor(
 
     override val currentCards: List<Card>?
         get() = currentRound?.cards
+
+    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
+        return currentRound?.canAddCard(card, from) ?: false
+    }
 
     override suspend fun startRound() = withContext(coroutineContext) {
         val player = currentPlayer!!
@@ -132,6 +136,14 @@ class SevensRoom constructor(
 
     override fun createHand(): Hand {
         return SevensHand()
+    }
+
+    override suspend fun canDrawCard(from: PlayerSession): Boolean {
+        return false
+    }
+
+    override suspend fun drawCard(player: PlayerSession): Boolean {
+        return false
     }
 
 }

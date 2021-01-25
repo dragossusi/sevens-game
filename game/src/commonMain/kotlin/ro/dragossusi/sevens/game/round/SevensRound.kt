@@ -4,7 +4,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ro.dragossusi.sevens.game.session.PlayerSession
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.canCut
+import ro.dragossusi.sevens.payload.card.canCut
 
 /**
  * server

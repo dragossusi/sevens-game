@@ -1,6 +1,7 @@
 package ro.dragossusi.sevens.game.bridge
 
 import ro.dragossusi.sevens.game.listener.*
+import ro.dragossusi.sevens.payload.base.GameTypeData
 
 /**
  * sevens-client
@@ -21,12 +22,17 @@ import ro.dragossusi.sevens.game.listener.*
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class AbsCommunication : Communication {
-    override var onRoomStarted: OnRoomStarted? = null
-    override var onRoomStopped: OnRoomStopped? = null
-    override var onPlayerTurn: OnPlayerTurn? = null
+interface Communication : ServerActions {
 
-    override var onRoomConnected: OnRoomConnected? = null
-    override var onGameEnded: OnGameEnded? = null
-    override var onGameStarted: OnGameStarted? = null
+    var onLobbyPlayerConnected: OnLobbyPlayerConnected?
+    var onLobbyPlayerDisconnected: OnLobbyPlayerDisconnected?
+    var onLobbyConnected: OnLobbyConnected?
+
+    var onRoomStarted: OnRoomStarted?
+    var onRoomStopped: OnRoomStopped?
+    var onPlayerTurn: OnPlayerTurn?
+
+    var onRoomConnected: OnRoomConnected?
+    var onGameEnded: OnGameEnded?
+    var onGameStarted: OnGameStarted?
 }
