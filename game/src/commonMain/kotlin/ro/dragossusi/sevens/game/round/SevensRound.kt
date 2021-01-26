@@ -38,8 +38,11 @@ class SevensRound constructor(
         get() = _cards
 
     override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
-        return if (_cards.size < numOfPlayers) true
-        else card.canCut(cards.first(), numOfPlayers)
+        return when {
+            _cards.size < numOfPlayers -> true
+            _cards.size % numOfPlayers != 0 -> true
+            else -> card.canCut(cards.first(), numOfPlayers)
+        }
     }
 
     override suspend fun addCard(card: Card, from: PlayerSession) {
