@@ -1,16 +1,16 @@
 package ro.dragossusi.sevens.game.listener
 
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 
 open class MapNotifier<N> : ListenerCollection<N> {
 
-    protected val listeners = mutableMapOf<PlayerSession, N>()
+    protected val listeners = mutableMapOf<RoomPlayer, N>()
 
-    override fun addListener(player: PlayerSession, onRoomChanged: N) {
+    override fun addListener(player: RoomPlayer, onRoomChanged: N) {
         listeners[player] = onRoomChanged
     }
 
-    override fun removeListener(player: PlayerSession) {
+    override fun removeListener(player: RoomPlayer) {
         listeners.remove(player)
     }
 

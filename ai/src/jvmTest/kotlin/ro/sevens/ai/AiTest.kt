@@ -62,6 +62,7 @@ class AiTest {
         runBlocking {
             aiRoom.addAi("asd")
             aiRoom.addAi("asdfg")
+            aiRoom.room.start()
             delay(100000)
         }
     }
@@ -70,7 +71,6 @@ class AiTest {
     fun testMacaoAis() {
         val macaoRoom = MacaoRoom(
             id = System.currentTimeMillis(),
-            type = GameTypeEnum.DUEL,
             deckProvider = DeckProviderImpl,
             tagLogger = ConsoleLogger("AiRoom"),
             coroutineContext = Dispatchers.Unconfined,

@@ -1,4 +1,4 @@
-package ro.dragossusi.sevens.ai.player
+package ro.dragossusi.sevens.ai.player.listener
 
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.game.bridge.Communication

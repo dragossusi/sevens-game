@@ -3,12 +3,8 @@ package ro.dragossusi.sevens.game.listener
 import ro.dragossusi.sevens.game.room.OnRoomChangedListener
 import ro.dragossusi.sevens.game.room.Room
 import ro.dragossusi.sevens.game.room.simplePlayers
-import ro.dragossusi.sevens.game.round.Round
-import ro.dragossusi.sevens.game.round.toResponse
-import ro.dragossusi.sevens.game.session.PlayerSession
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.payload.game.GameEndResponse
-import ro.dragossusi.sevens.payload.game.NewRoundResponse
 import ro.dragossusi.sevens.payload.game.PlayerTurnResponse
 
 

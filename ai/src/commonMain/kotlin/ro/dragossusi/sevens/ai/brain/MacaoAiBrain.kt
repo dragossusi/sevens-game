@@ -5,10 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.ai.player.AiPlayer
+import ro.dragossusi.sevens.ai.player.MacaoAiPlayer
 import ro.dragossusi.sevens.ai.player.SevensAiPlayer
+import ro.dragossusi.sevens.game.room.MacaoRoom
 import ro.dragossusi.sevens.game.room.OnRoundsChangedListener
 import ro.dragossusi.sevens.game.room.SevensRoom
-import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.base.LobbyData
 import ro.dragossusi.sevens.payload.game.GameEndResponse
 import ro.dragossusi.sevens.payload.game.NewRoundResponse
@@ -34,41 +36,38 @@ import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
  * along with sevens-game.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-open class SevensAiBrain constructor(
-    private val player: SevensAiPlayer,
-    private val room: SevensRoom,
+open class MacaoAiBrain constructor(
+    private val player: AiPlayer,
+    private val room: MacaoRoom,
     protected val tagLogger: TagLogger?,
     protected val operationDelay: Long,
     dispather: CoroutineDispatcher
 ) : RoundedAiBrain(dispather), OnRoundsChangedListener, CoroutineScope {
 
     override fun onLobbyConnected(lobby: LobbyData) {
-        tagLogger?.w("onLobbyConnected")
+        tagLogger?.w("TODO Not yet implemented")
     }
 
     override fun onLobbyPlayerConnected(lobby: LobbyData) {
-        tagLogger?.w("onLobbyPlayerConnected")
+        tagLogger?.w("TODO Not yet implemented")
     }
 
     override fun onLobbyPlayerDiconnected(lobby: LobbyData) {
-        tagLogger?.w("onLobbyPlayerDiconnected")
+        tagLogger?.w("TODO Not yet implemented")
     }
 
     override suspend fun onRoomStopped() {
-        tagLogger?.w("onRoomStopped")
+        tagLogger?.w("TODO Not yet implemented")
     }
 
     override fun onGameEnded(response: GameEndResponse) {
-        tagLogger?.w("onGameEnded")
     }
 
     override fun onGameStarted(players: Array<SimplePlayerResponse>) {
-        tagLogger?.w("onGameStarted")
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {
         launch {
-            tagLogger?.w("onRoundStarted $response")
             delay(operationDelay)
             if (response.currentPlayerId == player.id) {
                 room.addCard(player.session, player.pickCard())
@@ -77,41 +76,26 @@ open class SevensAiBrain constructor(
     }
 
     override fun onPlayerTurn(playerTurn: PlayerTurnResponse) {
-        launch {
-            tagLogger?.w("onPlayerTurn $playerTurn")
-            delay(operationDelay)
-            if (playerTurn.currentPlayerId == player.id) {
-                val session = player.session
-                val canEnd = room.canEndTurn(session)
-                var card: Card? = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
-                val result = if (card == null && canEnd) room.endTurn(player.session)
-                else {
-                    card?.let {
-                        if (room.canAddCard(it, session)) {
-                            if (room.addCard(session, it))
-                                return@launch
-                        }
-
-                    }
-                    card = player.hand!!.chooseRandomCard()
-                    room.addCard(
-                        player.session,
-                        card
-                    )
-                }
-                if (!result) {
-                    println("tried placing card $card")
-                    throw Exception("AI NOT GOOD")
-                }
-            }
-        }
+        tagLogger?.w("TODO onPlayerTurn")
+//        launch {
+//            delay(operationDelay)
+//            if (playerTurn.currentPlayerId == player.id) {
+//                val canEnd = playerTurn.canEnd(room.type)
+//                val card = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
+//                if (card == null && canEnd) room.newRound(player.session)
+//                else room.addCard(
+//                    player.session,
+//                    card ?: player.hand!!.chooseRandomCard()
+//                )
+//            }
+//        }
     }
 
     override fun onRoomConnected(id: Long) {
-        tagLogger?.w("onRoomConnected")
+        tagLogger?.w("TODO onRoomConnected")
     }
 
     override fun onRoundEnded(response: NewRoundResponse) {
-        tagLogger?.w("onRoundEnded")
+        tagLogger?.w("TODO onRoundEnded")
     }
 }

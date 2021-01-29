@@ -1,6 +1,6 @@
 package ro.dragossusi.sevens.game.round
 
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.game.CardsContainer
 import ro.dragossusi.sevens.payload.game.RoundResponse
@@ -25,15 +25,15 @@ import ro.dragossusi.sevens.payload.game.RoundResponse
  *
  */
 interface Round : CardsContainer {
-    val startingPlayer: PlayerSession
-    var owner: PlayerSession
+    val startingPlayer: RoomPlayer
+    var owner: RoomPlayer
 
-    fun canCut(playerSession: PlayerSession, playerCount: Int): Boolean
-    fun canContinue(playerSession: PlayerSession, playerCount: Int): Boolean
+    fun canCut(playerSession: RoomPlayer, playerCount: Int): Boolean
+    fun canContinue(playerSession: RoomPlayer, playerCount: Int): Boolean
 
-    suspend fun addCard(card: Card, from: PlayerSession)
-    suspend fun canAddCard(card: Card, from: PlayerSession): Boolean
-    suspend fun end(playerSession: PlayerSession): Boolean
+    suspend fun addCard(card: Card, from: RoomPlayer)
+    suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean
+    suspend fun end(playerSession: RoomPlayer): Boolean
 
     fun start(): Boolean
 }

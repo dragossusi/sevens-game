@@ -24,10 +24,10 @@ import ro.dragossusi.sevens.payload.enums.SupportedGame
  */
 object DeckProviderImpl : DeckProvider {
 
-    override fun createDeck(supportedGame: SupportedGame, type: GameTypeData): Deck {
+    override fun createDeck(supportedGame: SupportedGame, type: GameTypeData?): Deck {
         return when (supportedGame) {
             SupportedGame.SEVENS -> {
-                if (type.maxPlayers == 3) SevensThreeDeck()
+                if (type!!.maxPlayers == 3) SevensThreeDeck()
                 else SevensNormalDeck()
             }
             SupportedGame.MACAO -> FullDeck()

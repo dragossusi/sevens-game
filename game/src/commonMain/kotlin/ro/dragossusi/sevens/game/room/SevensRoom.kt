@@ -7,7 +7,7 @@ import ro.dragossusi.sevens.game.hand.Hand
 import ro.dragossusi.sevens.game.hand.SevensHand
 import ro.dragossusi.sevens.game.listener.*
 import ro.dragossusi.sevens.game.round.SevensRound
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.base.GameTypeData
@@ -38,7 +38,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class SevensRoom constructor(
     override val id: Long,
-    override val type: GameTypeData,
+    val type: GameTypeData,
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
@@ -47,6 +47,12 @@ class SevensRoom constructor(
     override val roundEndDelay: Long = 1250L
 ) : BaseRoundedRoom<RoundedPlayerListener, SevensRound>(roundsNotifier, playerNotifier, tagLogger) {
 
+    override val game: SupportedGame
+        get() = SupportedGame.SEVENS
+
+    override val maxPlayers: Int
+        get() = type.maxPlayers
+
     override suspend fun startGame() {
         currentPlayer = startingPlayer
         initCards()
@@ -54,7 +60,7 @@ class SevensRoom constructor(
         startRound()
     }
 
-    override val deck: Deck = deckProvider.createDeck(SupportedGame.SEVENS, type)
+    override val deck: Deck = deckProvider.createDeck(game, type)
 
     override val canStartRound: Boolean
         get() = players.all {
@@ -64,7 +70,7 @@ class SevensRoom constructor(
     override val currentCards: List<Card>?
         get() = currentRound?.cards
 
-    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
+    override suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean {
         return currentRound?.canAddCard(card, from) ?: false
     }
 
@@ -78,7 +84,7 @@ class SevensRoom constructor(
         roundsNotifier.onRoundStarted(this@SevensRoom)
     }
 
-    override suspend fun newRound(player: PlayerSession): Boolean {
+    override suspend fun newRound(player: RoomPlayer): Boolean {
         val result = endRound(player)
         if (!result) return result
         if (canStartRound) startRound()
@@ -86,7 +92,7 @@ class SevensRoom constructor(
         return result
     }
 
-    override suspend fun addCard(player: PlayerSession, card: Card): Boolean =
+    override suspend fun addCard(player: RoomPlayer, card: Card): Boolean =
         withContext(coroutineContext) {
             val result = chooseCard(player, card)
             if (!result) return@withContext result
@@ -103,13 +109,26 @@ class SevensRoom constructor(
             return@withContext result
         }
 
-    override suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean {
+    override suspend fun canEndTurn(from: RoomPlayer): Boolean = withContext(coroutineContext) {
+        val cardSize = currentCards?.size ?: return@withContext false
+        cardSize > 0 && cardSize % maxPlayers == 0
+    }
+
+    override suspend fun endTurn(player: RoomPlayer): Boolean = withContext(coroutineContext) {
+        newRound(player)
+    }
+
+    override suspend fun canChooseCardType(player: RoomPlayer, type: Card.Type): Boolean {
+        return false
+    }
+
+    override suspend fun chooseCardType(player: RoomPlayer, type: Card.Type): Boolean {
         tagLogger?.w("${player.player.name} tried to choose a card which is not possible in this mode")
         return false
     }
 
     override suspend fun addPlayerSession(
-        playerSession: PlayerSession,
+        playerSession: RoomPlayer,
         listener: RoundedPlayerListener
     ): Boolean = withContext(coroutineContext) {
         if (!canJoin || isFull) return@withContext false
@@ -120,7 +139,7 @@ class SevensRoom constructor(
         return@withContext true
     }
 
-    private fun drawCards(owner: PlayerSession) {
+    private fun drawCards(owner: RoomPlayer) {
         val maxPlayers = type.maxPlayers
         while (owner.cardsCount <= 3 && remainingCards.isNotEmpty()) {
             var index = players.indexOf(owner)
@@ -128,7 +147,7 @@ class SevensRoom constructor(
             var times = maxPlayers
             while (times != 0) {
                 --times
-                players[index].addCard(drawCard())
+                players[index].addCard(drawCard()!!)
                 index = (index + 1) % maxPlayers
             }
         }
@@ -138,11 +157,11 @@ class SevensRoom constructor(
         return SevensHand()
     }
 
-    override suspend fun canDrawCard(from: PlayerSession): Boolean {
+    override suspend fun canDrawCard(from: RoomPlayer): Boolean {
         return false
     }
 
-    override suspend fun drawCard(player: PlayerSession): Boolean {
+    override suspend fun drawCard(player: RoomPlayer): Boolean {
         return false
     }
 

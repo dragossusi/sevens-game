@@ -1,14 +1,13 @@
 package ro.dragossusi.sevens.ai.room
 
 import kotlinx.coroutines.CoroutineDispatcher
-import ro.dragossusi.sevens.ai.SevensAiPlayer
+import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.ai.player.AiPlayer
+import ro.dragossusi.sevens.ai.player.SevensAiPlayer
 import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.room.Room
-import ro.dragossusi.sevens.game.round.Round
-import ro.dragossusi.sevens.game.session.PlayerSession
-import ro.dragossusi.logger.TagLogger
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Player
-import ro.dragossusi.sevens.payload.base.GameTypeData
 
 
 /**
@@ -30,15 +29,12 @@ import ro.dragossusi.sevens.payload.base.GameTypeData
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class AiRoom<L : PlayerListener, R : Round, RM : Room<L>> constructor(
+abstract class AiRoom<L : PlayerListener, RM : Room<L>> constructor(
     protected val tagLogger: TagLogger?,
     protected val dispatcher: CoroutineDispatcher,
     protected val operationDelay: Long,
     internal val room: RM
 ) {
-
-    val type: GameTypeData
-        get() = room.type
 
     suspend fun addAi(name: String, tagLogger: TagLogger? = null) {
         val playerSession = createSession(
@@ -49,16 +45,22 @@ abstract class AiRoom<L : PlayerListener, R : Round, RM : Room<L>> constructor(
         room.addPlayerSession(playerSession, listener)
     }
 
-    abstract fun createSession(room: RM, player: Player): PlayerSession
-    abstract fun createPlayerListener(session: PlayerSession): SevensAiPlayer
+    fun createSession(room: RM, player: Player): RoomPlayer {
+        return RoomPlayer(
+            room,
+            player
+        )
+    }
 
-    suspend fun addPlayer(session: PlayerSession, listener: L) {
+    abstract fun createPlayerListener(session: RoomPlayer): AiPlayer
+
+    suspend fun addPlayer(session: RoomPlayer, listener: L) {
         room.addPlayerSession(
             playerSession = session,
             listener = listener
         )
     }
 
-    abstract fun createBrain(playerSession: PlayerSession): L
+    abstract fun createBrain(playerSession: RoomPlayer): L
 
 }

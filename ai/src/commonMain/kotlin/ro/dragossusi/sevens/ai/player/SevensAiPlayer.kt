@@ -1,7 +1,7 @@
-package ro.dragossusi.sevens.ai
+package ro.dragossusi.sevens.ai.player
 
 import ro.dragossusi.sevens.game.hand.Hand
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.base.GameTypeData
 import ro.dragossusi.sevens.payload.card.isCut
@@ -29,16 +29,11 @@ import ro.dragossusi.sevens.payload.extensions.pointsCount
  *
  */
 class SevensAiPlayer constructor(
-    val session: PlayerSession,
+    session: RoomPlayer,
     val type: GameTypeData
-) {
-    val id: Long
-        get() = session.id
+) : AiPlayer(session) {
 
-    val hand: Hand?
-        get() = session.hand
-
-    fun pickCard(): Card {
+    override fun pickCard(): Card {
         val hand = hand!!
         var selectedCard = hand.first()
         var times = 0
@@ -57,7 +52,7 @@ class SevensAiPlayer constructor(
         return selectedCard
     }
 
-    fun pickCard(placedCards: Array<Card>, canEnd: Boolean): Card? {
+    override fun pickCard(placedCards: Array<Card>, canEnd: Boolean): Card? {
         if (placedCards.isEmpty()) return pickCard()
         val hand = hand!!
         val firstCard = placedCards.first()

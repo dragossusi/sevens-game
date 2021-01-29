@@ -1,6 +1,6 @@
 package ro.dragossusi.sevens.game.listener
 
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 
 
 /**
@@ -24,7 +24,7 @@ import ro.dragossusi.sevens.game.session.PlayerSession
  */
 interface ListenerCollection<N> {
 
-    fun addListener(player: PlayerSession, onRoomChanged: N)
-    fun removeListener(player: PlayerSession)
+    fun addListener(player: RoomPlayer, onRoomChanged: N)
+    fun removeListener(player: RoomPlayer)
 
 }

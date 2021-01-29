@@ -3,10 +3,10 @@ package ro.dragossusi.sevens.game.room
 import kotlinx.coroutines.CoroutineScope
 import ro.dragossusi.sevens.game.deck.Deck
 import ro.dragossusi.sevens.game.listener.PlayerListener
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.base.GameTypeData
 import ro.dragossusi.sevens.payload.enums.RoomStatus
+import ro.dragossusi.sevens.payload.enums.SupportedGame
 import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
 
 /**
@@ -46,13 +46,19 @@ interface Room<L : PlayerListener> : CoroutineScope {
     /**
      * Players playing in this room
      */
-    val players: List<PlayerSession>
+    val players: List<RoomPlayer>
 
     /**
      * Check if the room is full(no more players can join)
      */
     val isFull: Boolean
         get() = players.size >= maxPlayers
+
+
+    /**
+     * Max players allowed in this room
+     */
+    val maxPlayers: Int
 
     /**
      * deck used
@@ -72,23 +78,23 @@ interface Room<L : PlayerListener> : CoroutineScope {
     /**
      * starting player
      */
-    val startingPlayer: PlayerSession
+    val startingPlayer: RoomPlayer
         get() = players[0]
 
     /**
      * game type
      */
-    val type: GameTypeData
+    val game: SupportedGame
 
     /**
      * current player
      */
-    var currentPlayer: PlayerSession?
+    var currentPlayer: RoomPlayer?
 
     /**
      * next player
      */
-    val nextPlayer: PlayerSession?
+    val nextPlayer: RoomPlayer?
         get() = currentPlayer?.let {
             players[(players.indexOf(it) + 1) % maxPlayers]
         }
@@ -98,11 +104,6 @@ interface Room<L : PlayerListener> : CoroutineScope {
      */
     val canJoin: Boolean
 
-    /**
-     * Check if a round can start
-     */
-    val canStartRound: Boolean
-
     //funs
 
     /**
@@ -110,7 +111,7 @@ interface Room<L : PlayerListener> : CoroutineScope {
      *
      * @param from the player who wants to draw a card
      */
-    suspend fun canDrawCard(from: PlayerSession): Boolean
+    suspend fun canDrawCard(from: RoomPlayer): Boolean
 
     /**
      * Checks if user can add this card
@@ -118,7 +119,7 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param card the card to check
      * @param from the player who wants to add
      */
-    suspend fun canAddCard(card: Card, from: PlayerSession): Boolean
+    suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean
 
     /**
      * add a card
@@ -126,7 +127,7 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param player    player that adds
      * @param card      the card to add
      */
-    suspend fun addCard(player: PlayerSession, card: Card): Boolean
+    suspend fun addCard(player: RoomPlayer, card: Card): Boolean
 
     /**
      * choose a card type
@@ -134,7 +135,15 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param player    Player that chooses
      * @param type      Card Type to choose
      */
-    suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean
+    suspend fun canChooseCardType(player: RoomPlayer, type: Card.Type): Boolean
+
+    /**
+     * choose a card type
+     *
+     * @param player    Player that chooses
+     * @param type      Card Type to choose
+     */
+    suspend fun chooseCardType(player: RoomPlayer, type: Card.Type): Boolean
 
     /**
      * draw a card
@@ -142,7 +151,21 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param player    Player that chooses
      * @param type      Card Type to choose
      */
-    suspend fun drawCard(player: PlayerSession): Boolean
+    suspend fun drawCard(player: RoomPlayer): Boolean
+
+    /**
+     * Checks if user can end turn
+     *
+     * @param from the player who wants to add
+     */
+    suspend fun canEndTurn(from: RoomPlayer): Boolean
+
+    /**
+     * end turn
+     *
+     * @param player    Player that wants to end turn
+     */
+    suspend fun endTurn(player: RoomPlayer): Boolean
 
     /**
      * starts the room
@@ -166,7 +189,7 @@ interface Room<L : PlayerListener> : CoroutineScope {
      * @param listener          player listener
      */
     suspend fun addPlayerSession(
-        playerSession: PlayerSession,
+        playerSession: RoomPlayer,
         listener: L
     ): Boolean
 
@@ -183,13 +206,7 @@ val Room<*>.playerCount: Int
     get() = players.size
 
 /**
- * Max number of players allowed in the room
- */
-val Room<*>.maxPlayers: Int
-    get() = type.maxPlayers
-
-/**
  * Get players in the room in a simple object used for serialization
  */
 val Room<*>.simplePlayers: List<SimplePlayerResponse>
-    get() = players.map(PlayerSession::toSimplePlayer)
+    get() = players.map(RoomPlayer::toSimplePlayer)

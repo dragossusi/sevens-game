@@ -69,6 +69,10 @@ abstract class Hand private constructor(cards: MutableList<Card>) : ListContaine
         _cards += card
     }
 
+    fun addCards(cards: Collection<Card>) {
+        _cards += cards
+    }
+
     override fun toString(): String {
         return "Hand(\n" +
                 "_cards=$_cards, \n" +

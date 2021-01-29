@@ -4,13 +4,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ro.dragossusi.sevens.ai.player.LocalPlayerListener
 import ro.dragossusi.sevens.ai.room.AiRoom
 import ro.dragossusi.sevens.game.bridge.AbsCommunication
 import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.room.Room
-import ro.dragossusi.sevens.game.round.Round
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.Player
 import kotlin.coroutines.CoroutineContext
@@ -34,47 +32,52 @@ import kotlin.coroutines.CoroutineContext
  * along with sevens-client.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-abstract class LocalCommunication<L : PlayerListener, R : Round, RM : Room<L>> constructor(
-    protected val aiRoom: AiRoom<L, R, RM>,
+open class LocalCommunication<L : PlayerListener, RM : Room<L>> constructor(
+    protected val aiRoom: AiRoom<L, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
     protected val playerListener: L
 ) : AbsCommunication(), CoroutineScope {
 
-    protected val playerSession = PlayerSession(aiRoom.room, player)
+    protected val room: RM
+        get() = aiRoom.room
+
+    protected val playerSession = RoomPlayer(room, player)
 
     override val coroutineContext: CoroutineContext = dispatcher + Job()
 
     override fun placeCard(card: Card) {
         launch {
-            aiRoom.room.addCard(playerSession, card)
+            if (room.canAddCard(card, playerSession))
+                room.addCard(playerSession, card)
         }
     }
 
     override fun chooseCardType(type: Card.Type) {
         launch {
-            aiRoom.room.chooseCardType(playerSession, type)
+            if (room.canChooseCardType(playerSession, type))
+                room.chooseCardType(playerSession, type)
         }
     }
 
     override fun connect() {
         launch {
             aiRoom.addPlayer(playerSession, playerListener)
-            for (i in 1 until aiRoom.type.maxPlayers)
+            for (i in 1 until aiRoom.room.maxPlayers)
                 aiRoom.addAi("AI $i")
-            aiRoom.room.start()
+            room.start()
         }
     }
 
     override fun disconnect() {
         launch {
-            aiRoom.room.stop()
+            room.stop()
         }
     }
 
     override fun drawCard() {
         launch {
-            aiRoom.room.drawCard(playerSession)
+            room.drawCard(playerSession)
         }
     }
 

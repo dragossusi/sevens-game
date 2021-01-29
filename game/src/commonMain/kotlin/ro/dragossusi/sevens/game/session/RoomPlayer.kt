@@ -28,11 +28,18 @@ import ro.dragossusi.sevens.payload.game.SimplePlayerResponse
  * along with server.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
-class PlayerSession constructor(
+class RoomPlayer constructor(
     val room: Room<*>,
     val player: Player,
     var hand: Hand? = null
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (other is RoomPlayer) {
+            return player.id == other.player.id
+        }
+        return super.equals(other)
+    }
 
     val mutex = Mutex()
 
@@ -79,7 +86,7 @@ class PlayerSession constructor(
 
 }
 
-suspend fun PlayerSession.chooseCard(round: Round, card: Card): Boolean {
+suspend fun RoomPlayer.chooseCard(round: Round, card: Card): Boolean {
     val hand = hand ?: return false
     mutex.withLock(hand) {
 

@@ -8,10 +8,13 @@ import ro.dragossusi.sevens.game.hand.SevensHand
 import ro.dragossusi.sevens.game.listener.MapPlayerNotifier
 import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.listener.PlayerNotifier
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.base.GameTypeData
+import ro.dragossusi.sevens.payload.card.canDrawMoreMacao
+import ro.dragossusi.sevens.payload.card.isChangeColorMacao
+import ro.dragossusi.sevens.payload.card.isChangeColorMacao
+import ro.dragossusi.sevens.payload.card.isDrawCardMacao
 import ro.dragossusi.sevens.payload.enums.SupportedGame
 import kotlin.coroutines.CoroutineContext
 
@@ -39,7 +42,6 @@ import kotlin.coroutines.CoroutineContext
  */
 class MacaoRoom constructor(
     override val id: Long,
-    override val type: GameTypeData,
     deckProvider: DeckProvider,
     tagLogger: TagLogger?,
     playerNotifier: PlayerNotifier = MapPlayerNotifier(tagLogger),
@@ -47,57 +49,99 @@ class MacaoRoom constructor(
     override val roundEndDelay: Long = 1250L
 ) : BaseRoom<PlayerListener>(playerNotifier, tagLogger) {
 
-    override val deck: Deck = deckProvider.createDeck(SupportedGame.SEVENS, type)
+    override val maxPlayers: Int
+        get() = 6
+
+    override val game: SupportedGame
+        get() = SupportedGame.MACAO
+
+    override val deck: Deck = deckProvider.createDeck(SupportedGame.MACAO, null)
 
     override var currentCards: MutableList<Card>? = null
 
     override suspend fun startGame() {
-        TODO("Not yet implemented")
+        currentPlayer = startingPlayer
+        initCards()
+        initHands()
+        drawCards(currentPlayer!!)
     }
 
-    override suspend fun canAddCard(card: Card, from: PlayerSession): Boolean {
-        TODO("Not yet implemented")
+    var hasToDraw: Boolean = false
+
+    override suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean = withContext(coroutineContext) {
+        //check if no card placed
+        val currentCard = currentCards?.lastOrNull() ?: return@withContext false
+        //check for forcing draws
+        if (hasToDraw && card.canDrawMoreMacao(currentCard))
+            return@withContext true
+        //check for color change
+        if (card.isChangeColorMacao)
+            return@withContext true
+        //check number and type
+        if (card.number == currentCard.number || card.type == currentCard.type)
+            return@withContext true
+        //dont allow
+        return@withContext false
     }
 
-    override suspend fun canDrawCard(from: PlayerSession): Boolean {
-        return false
+    override suspend fun canDrawCard(from: RoomPlayer): Boolean {
+        return true
     }
 
-    override suspend fun drawCard(player: PlayerSession): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun drawCard(player: RoomPlayer): Boolean = withContext(coroutineContext) {
+        val card = drawCard() ?: return@withContext false
+        player.addCard(card)
+        return@withContext true
     }
 
-    override val canStartRound: Boolean
-        get() = players.all {
-            it.cardsCount != 0
-        }
-
-    override suspend fun addCard(player: PlayerSession, card: Card): Boolean = withContext(coroutineContext) {
+    override suspend fun addCard(player: RoomPlayer, card: Card): Boolean = withContext(coroutineContext) {
         val currentCard = currentCards?.last() ?: return@withContext false
-        if (currentCard.number == 11) {
-            TODO("change color")
+        if (currentCard.isChangeColorMacao) {
+            currentCards!! += card
+            return@withContext true
         }
         if (currentCard.number == card.number || currentCard.type == card.type) {
             currentCards!! += card
+            if (card.isDrawCardMacao)
+                setPlayerTurn(nextPlayer!!)
             return@withContext true
         }
         return@withContext false
     }
 
-    override suspend fun chooseCardType(player: PlayerSession, type: Card.Type): Boolean {
-        tagLogger?.w("${player.player.name} tried to choose a card which is not possible in this mode")
-        return false
+    override suspend fun canEndTurn(from: RoomPlayer): Boolean = withContext(coroutineContext) {
+        return@withContext true //todo
     }
 
-    private fun drawCards(owner: PlayerSession) {
-        val maxPlayers = type.maxPlayers
+    override suspend fun endTurn(player: RoomPlayer): Boolean = withContext(coroutineContext) {
+        setPlayerTurn(nextPlayer!!)
+        true
+    }
+
+    override suspend fun canChooseCardType(
+        player: RoomPlayer,
+        type: Card.Type
+    ): Boolean = withContext(coroutineContext) {
+        currentPlayer == player && currentCards?.lastOrNull()?.isChangeColorMacao == true
+    }
+
+    override suspend fun chooseCardType(player: RoomPlayer, type: Card.Type): Boolean = withContext(coroutineContext) {
+        val card = currentCards?.lastOrNull() ?: return@withContext false
+        if (card.number != 11) return@withContext false
+        currentCards!!.removeLast()
+        currentCards!!.add(Card(11, type))
+        return@withContext true
+    }
+
+    private fun drawCards(owner: RoomPlayer) {
+        val maxPlayers = players.size
         while (owner.cardsCount <= 5 && remainingCards.isNotEmpty()) {
             var index = players.indexOf(owner)
             if (index == -1) throw Exception("How did this happen?")
             var times = maxPlayers
             while (times != 0) {
                 --times
-                players[index].addCard(drawCard())
+                players[index].addCard(drawCard()!!)
                 index = (index + 1) % maxPlayers
             }
         }
@@ -108,12 +152,12 @@ class MacaoRoom constructor(
     }
 
     override suspend fun addPlayerSession(
-        playerSession: PlayerSession,
+        player: RoomPlayer,
         listener: PlayerListener
     ): Boolean = withContext(coroutineContext) {
         if (!canJoin || isFull) return@withContext false
-        _players.add(playerSession)
-        addRoomListener(playerSession, listener)
+        _players.add(player)
+        addRoomListener(player, listener)
         listener.onRoomConnected(id)
         return@withContext true
     }

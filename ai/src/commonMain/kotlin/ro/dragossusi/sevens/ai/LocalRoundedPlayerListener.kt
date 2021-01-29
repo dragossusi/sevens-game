@@ -1,6 +1,6 @@
 package ro.dragossusi.sevens.ai
 
-import ro.dragossusi.sevens.ai.player.LocalPlayerListener
+import ro.dragossusi.sevens.ai.player.listener.LocalPlayerListener
 import ro.dragossusi.sevens.game.bridge.RoundedCommunication
 import ro.dragossusi.sevens.game.listener.RoundedPlayerListener
 import ro.dragossusi.logger.TagLogger
@@ -26,6 +26,7 @@ import ro.dragossusi.sevens.payload.game.NewRoundResponse
  * along with Sevens.  If not, see [License](http://www.gnu.org/licenses/) .
  *
  */
+@Suppress("unused")
 class LocalRoundedPlayerListener<C : RoundedCommunication>(
     private val tagLogger: TagLogger?
 ) : LocalPlayerListener<C>(tagLogger), RoundedPlayerListener {

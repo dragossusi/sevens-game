@@ -4,7 +4,7 @@ import kotlinx.coroutines.withContext
 import ro.dragossusi.sevens.game.hand.Hand
 import ro.dragossusi.sevens.game.listener.PlayerListener
 import ro.dragossusi.sevens.game.listener.PlayerNotifier
-import ro.dragossusi.sevens.game.session.PlayerSession
+import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.logger.TagLogger
 import ro.dragossusi.sevens.payload.Card
 import ro.dragossusi.sevens.payload.enums.RoomStatus
@@ -40,18 +40,18 @@ abstract class BaseRoom<L : PlayerListener>(
         }
 
     override val canJoin: Boolean
-        get() = players.size < type.maxPlayers && status == RoomStatus.WAITING
+        get() = players.size < maxPlayers && status == RoomStatus.WAITING
 
 
-    protected val _players = mutableListOf<PlayerSession>()
-    override val players: List<PlayerSession>
+    protected val _players = mutableListOf<RoomPlayer>()
+    override val players: List<RoomPlayer>
         get() = _players
 
     private val _remainingCards = mutableListOf<Card>()
     override val remainingCards: List<Card>
         get() = _remainingCards
 
-    override var currentPlayer: PlayerSession? = null
+    override var currentPlayer: RoomPlayer? = null
 
     protected fun initCards() {
         _remainingCards.clear()
@@ -66,19 +66,18 @@ abstract class BaseRoom<L : PlayerListener>(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    protected fun drawCard(): Card {
-        return _remainingCards.removeLast()
+    protected fun drawCard(): Card? {
+        return _remainingCards.removeLastOrNull()
     }
 
     fun addRoomListener(
-        player: PlayerSession,
+        player: RoomPlayer,
         onRoomChanged: OnRoomChangedListener
     ) {
         playerNotifier.addListener(player, onRoomChanged)
     }
 
-    fun removeRoomListener(player: PlayerSession) {
+    fun removeRoomListener(player: RoomPlayer) {
         playerNotifier.removeListener(player)
     }
 
@@ -119,7 +118,7 @@ abstract class BaseRoom<L : PlayerListener>(
     /**
      * Sets the player's turn
      */
-    protected suspend fun setPlayerTurn(player: PlayerSession) {
+    protected suspend fun setPlayerTurn(player: RoomPlayer) {
         currentPlayer = player
         playerNotifier.onPlayerTurn(this)
     }

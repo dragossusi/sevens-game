@@ -12,11 +12,11 @@ import ro.dragossusi.sevens.game.round.Round
 import ro.dragossusi.sevens.payload.Player
 
 class LocalRoundedCommunication<L : RoundedPlayerListener, R : Round, RM : RoundedRoom<L, R>>(
-    aiRoom: AiRoom<L, R, RM>,
+    aiRoom: AiRoom<L, RM>,
     player: Player,
     dispatcher: CoroutineDispatcher,
     playerListener: L
-) : LocalCommunication<L, R, RM>(
+) : LocalCommunication<L, RM>(
     aiRoom,
     player,
     dispatcher,
@@ -26,9 +26,10 @@ class LocalRoundedCommunication<L : RoundedPlayerListener, R : Round, RM : Round
     override var onRoundStarted: OnRoundStarted? = null
     override var onRoundEnded: OnRoundEnded? = null
 
-    override fun endRound() {
+    override fun endTurn() {
         launch {
-            aiRoom.room.newRound(playerSession)
+            if (room.canEndTurn(playerSession))
+                room.endTurn(playerSession)
         }
     }
 

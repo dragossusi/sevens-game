@@ -24,5 +24,6 @@ import ro.dragossusi.sevens.payload.enums.SupportedGame
  */
 interface DeckProvider {
 
-    fun createDeck(supportedGame: SupportedGame, type: GameTypeData): Deck
+    fun createDeck(supportedGame: SupportedGame, type: GameTypeData?): Deck
+
 }
