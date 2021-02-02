@@ -1,7 +1,7 @@
 package ro.dragossusi.sevens.game.hand
 
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.card.isSevensPoint
+import ro.dragossusi.sevens.payload.card.isPointSevens
 
 /**
  * sevens-game
@@ -35,7 +35,7 @@ class SevensHand : Hand() {
     override fun addWonCards(cards: Collection<Card>) {
         wonCards += cards
         wonPointsCount += cards.count {
-            it.isSevensPoint
+            it.isPointSevens
         }
     }
 

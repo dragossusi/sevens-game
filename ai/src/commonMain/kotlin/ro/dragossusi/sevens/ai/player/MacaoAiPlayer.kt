@@ -1,11 +1,9 @@
 package ro.dragossusi.sevens.ai.player
 
-import ro.dragossusi.sevens.game.hand.Hand
 import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.base.GameTypeData
-import ro.dragossusi.sevens.payload.card.isCut
-import ro.dragossusi.sevens.payload.extensions.firstCut
+import ro.dragossusi.sevens.payload.card.isCutSevens
+import ro.dragossusi.sevens.payload.extensions.firstCutSevens
 import ro.dragossusi.sevens.payload.extensions.pointsCount
 
 
@@ -38,7 +36,7 @@ class MacaoAiPlayer constructor(
         var times = 0
         for (i in hand.indices) {
             val currentCard = hand[i]
-            if (currentCard.isCut(session.room.maxPlayers)) continue
+            if (currentCard.isCutSevens(session.room.maxPlayers)) continue
             var currentTimes = 1
             for (j in i + 1 until hand.size) {
                 if (hand[j] == currentCard) ++currentTimes
@@ -57,7 +55,7 @@ class MacaoAiPlayer constructor(
         val firstCard = placedCards.first()
         if (hand.hasCardNumber(firstCard.number)) return firstCard
         if (placedCards.pointsCount > 0) {
-            return hand.firstCut(session.room.maxPlayers)
+            return hand.firstCutSevens(session.room.maxPlayers)
         }
         return if (canEnd) null
         else hand.chooseRandomCard()

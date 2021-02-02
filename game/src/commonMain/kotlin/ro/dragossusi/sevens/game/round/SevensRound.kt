@@ -4,7 +4,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ro.dragossusi.sevens.game.session.RoomPlayer
 import ro.dragossusi.sevens.payload.Card
-import ro.dragossusi.sevens.payload.card.canCut
+import ro.dragossusi.sevens.payload.card.canCutSevens
 
 /**
  * server
@@ -41,7 +41,7 @@ class SevensRound constructor(
         return when {
             _cards.size < numOfPlayers -> true
             _cards.size % numOfPlayers != 0 -> true
-            else -> card.canCut(cards.first(), numOfPlayers)
+            else -> card.canCutSevens(cards.first(), numOfPlayers)
         }
     }
 
@@ -49,7 +49,7 @@ class SevensRound constructor(
         mutex.withLock(this) {
             val firstCard = cards.firstOrNull()
             firstCard?.let {
-                if (card.canCut(firstCard, numOfPlayers)) {
+                if (card.canCutSevens(firstCard, numOfPlayers)) {
                     owner = from
                 }
             }
@@ -60,7 +60,7 @@ class SevensRound constructor(
     override fun canCut(playerSession: RoomPlayer, playerCount: Int): Boolean {
         val firstCard = cards.first()
         playerSession.hand!!.cards.forEach {
-            if (it.canCut(firstCard, playerCount))
+            if (it.canCutSevens(firstCard, playerCount))
                 return true
         }
         return false
