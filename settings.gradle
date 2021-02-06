@@ -1,4 +1,0 @@
-rootProject.name = 'SevensGame'
-
-include ":game"
-include ":ai"

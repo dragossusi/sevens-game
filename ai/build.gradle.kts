@@ -5,13 +5,15 @@ plugins {
 }
 
 kotlin {
-    /* Targets configuration omitted. 
-    *  To find out how to configure the targets, please follow the link:
-    *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
+
     jvm()
-    js(IR) {
+    js(BOTH) {
         nodejs()
-        binaries.executable()
+    }
+    ios{
+        binaries.framework {
+            baseName = "SevensAi"
+        }
     }
 
     sourceSets {
