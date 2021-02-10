@@ -63,7 +63,7 @@ open class MacaoAiBrain constructor(
     override fun onGameEnded(response: GameEndResponse) {
     }
 
-    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
+    override fun onGameStarted(players: List<SimplePlayerResponse>) {
     }
 
     override fun onRoundStarted(response: NewRoundResponse) {

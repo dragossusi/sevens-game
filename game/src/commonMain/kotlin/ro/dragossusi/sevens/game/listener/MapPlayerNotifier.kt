@@ -54,7 +54,7 @@ class MapPlayerNotifier(
                         wonCards = hand.wonCardsCount,
 //                        rounds = rounds.map {
 //                            it.toResponse()
-//                        }.toTypedArray()
+//                        }
                     )
                 )
             }
@@ -64,7 +64,7 @@ class MapPlayerNotifier(
     override suspend fun onGameStarted(room: Room<*>) {
         room.run {
             tagLogger?.d("onGameStarted ${room.id}")
-            val simplePlayers = simplePlayers.toTypedArray()
+            val simplePlayers = simplePlayers
             listeners.forEach {
                 it.value.onGameStarted(simplePlayers)
             }

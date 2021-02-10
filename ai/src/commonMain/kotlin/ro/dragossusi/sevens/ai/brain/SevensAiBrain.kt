@@ -62,7 +62,7 @@ open class SevensAiBrain constructor(
         tagLogger?.w("onGameEnded")
     }
 
-    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
+    override fun onGameStarted(players: List<SimplePlayerResponse>) {
         tagLogger?.w("onGameStarted")
     }
 

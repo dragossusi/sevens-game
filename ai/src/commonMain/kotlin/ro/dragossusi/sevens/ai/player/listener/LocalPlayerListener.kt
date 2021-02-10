@@ -59,7 +59,7 @@ open class LocalPlayerListener<C : Communication>(
         sevensCommunication?.onGameEnded?.onGameEnded(response)
     }
 
-    override fun onGameStarted(players: Array<SimplePlayerResponse>) {
+    override fun onGameStarted(players: List<SimplePlayerResponse>) {
         tagLogger?.i("onGameStarted: $players")
         sevensCommunication?.onGameStarted?.onGameStarted(players)
     }
