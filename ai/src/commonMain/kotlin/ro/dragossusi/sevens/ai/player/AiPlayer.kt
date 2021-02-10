@@ -35,6 +35,6 @@ abstract class AiPlayer(
     val hand: Hand?
         get() = session.hand
 
-    abstract fun pickCard(placedCards: Array<Card>, canEnd: Boolean): Card?
+    abstract fun pickCard(placedCards: Collection<Card>, canEnd: Boolean): Card?
     abstract fun pickCard(): Card
 }

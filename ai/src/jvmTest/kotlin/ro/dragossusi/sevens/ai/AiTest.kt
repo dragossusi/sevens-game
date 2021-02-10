@@ -38,15 +38,15 @@ class AiTest {
             id = System.currentTimeMillis(),
             type = GameTypeEnum.DUEL,
             deckProvider = DeckProviderImpl,
-            tagLogger = ConsoleLogger("AiRoom"),
+            tagLogger = ConsoleLogger("SevensRoom"),
             coroutineContext = Dispatchers.Unconfined,
-            roundEndDelay = 1250L
+            roundEndDelay = 250L
         )
         //todo
         val aiRoom = SevensAiRoom(
             tagLogger = ConsoleLogger("AiRoom"),
             dispatcher = Dispatchers.Unconfined,
-            operationDelay = 0L,
+            operationDelay = 50L,
             room = sevensRoom
         )
 //        val communication = LocalSevensCommunication(

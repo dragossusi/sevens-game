@@ -84,8 +84,10 @@ open class SevensAiBrain constructor(
                 val session = player.session
                 val canEnd = room.canEndTurn(session)
                 var card: Card? = player.pickCard(playerTurn.roundCards, canEnd = canEnd)
-                val result = if (card == null && canEnd) room.endTurn(player.session)
-                else {
+                val result = if (card == null && canEnd) {
+                    println("tried to end turn")
+                    room.endTurn(player.session)
+                } else {
                     card?.let {
                         if (room.canAddCard(it, session)) {
                             if (room.addCard(session, it))
@@ -93,6 +95,7 @@ open class SevensAiBrain constructor(
                         }
 
                     }
+                    println("tried to choose random card")
                     card = player.hand!!.chooseRandomCard()
                     room.addCard(
                         player.session,

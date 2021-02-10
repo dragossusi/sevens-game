@@ -43,7 +43,7 @@ class MapPlayerNotifier(
     override suspend fun onGameEnded(room: Room<*>) {
         room.run {
             tagLogger?.d("onGameEnded ${room.id}")
-            val simplePlayers = simplePlayers.toTypedArray()
+            val simplePlayers = simplePlayers
             listeners.forEach {
                 val hand = it.key.hand!!
                 it.value.onGameEnded(
@@ -74,7 +74,7 @@ class MapPlayerNotifier(
     override suspend fun onPlayerTurn(room: Room<*>) {
         room.run {
             tagLogger?.d("onPlayerTurn ${id}")
-            val simplePlayers = simplePlayers.toTypedArray()
+            val simplePlayers = simplePlayers
             listeners.forEach {
                 it.value.onPlayerTurn(
                     PlayerTurnResponse(
@@ -82,7 +82,7 @@ class MapPlayerNotifier(
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentCards!!.toTypedArray()
+                        currentCards!!
                     )
                 )
             }

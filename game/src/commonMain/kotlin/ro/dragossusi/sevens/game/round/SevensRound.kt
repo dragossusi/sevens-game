@@ -37,7 +37,7 @@ class SevensRound constructor(
     override val cards: List<Card>
         get() = _cards
 
-    override suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean {
+    override fun canAddCard(card: Card, from: RoomPlayer): Boolean {
         return when {
             _cards.size < numOfPlayers -> true
             _cards.size % numOfPlayers != 0 -> true

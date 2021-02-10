@@ -49,7 +49,7 @@ class MacaoAiPlayer constructor(
         return selectedCard
     }
 
-    override fun pickCard(placedCards: Array<Card>, canEnd: Boolean): Card? {
+    override fun pickCard(placedCards: Collection<Card>, canEnd: Boolean): Card? {
         if (placedCards.isEmpty()) return pickCard()
         val hand = hand!!
         val firstCard = placedCards.first()

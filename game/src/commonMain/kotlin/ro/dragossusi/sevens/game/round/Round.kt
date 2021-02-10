@@ -32,7 +32,7 @@ interface Round : CardsContainer {
     fun canContinue(playerSession: RoomPlayer, playerCount: Int): Boolean
 
     suspend fun addCard(card: Card, from: RoomPlayer)
-    suspend fun canAddCard(card: Card, from: RoomPlayer): Boolean
+    fun canAddCard(card: Card, from: RoomPlayer): Boolean
     suspend fun end(playerSession: RoomPlayer): Boolean
 
     fun start(): Boolean

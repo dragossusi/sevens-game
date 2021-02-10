@@ -14,16 +14,16 @@ class MapRoundsNotifier<L : RoundedPlayerListener, R : Round>(
     override suspend fun onRoundStarted(room: RoundedRoom<L, R>) {
         room.run {
             tagLogger?.d("onRoundStarted ${room.id}")
-            val simplePlayers = simplePlayers.toTypedArray()
+            val simplePlayers = simplePlayers
             listeners.forEach {
                 val hand = it.key.hand!!
                 it.value.onRoundStarted(
                     NewRoundResponse(
-                        hand.cards.toTypedArray(),
+                        hand.cards,
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards.toTypedArray(),
+                        currentRound!!.cards,
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount
                     )
@@ -35,16 +35,16 @@ class MapRoundsNotifier<L : RoundedPlayerListener, R : Round>(
     override suspend fun onRoundEnded(room: RoundedRoom<L, R>) {
         room.run {
             tagLogger?.d("onRoundEnded ${room.rounds.last()}")
-            val simplePlayers = simplePlayers.toTypedArray()
+            val simplePlayers = simplePlayers
             listeners.forEach { (key, value) ->
                 val hand = key.hand!!
                 value.onRoundEnded(
                     NewRoundResponse(
-                        hand.cards.toTypedArray(),
+                        hand.cards,
                         simplePlayers,
                         startingPlayer.id,
                         currentPlayer!!.id,
-                        currentRound!!.cards.toTypedArray(),
+                        currentRound!!.cards,
                         wonPoints = hand.wonPointsCount,
                         wonCards = hand.wonCardsCount
                     )
